@@ -30,21 +30,19 @@ namespace Stockfish {
 /// PartnerHandler manages the communication with the partner
 /// in games played on two boards, such as bughouse.
 
-enum PartnerType {
-  HUMAN,
-  FAIRY,
-  ALL_PARTNERS
-};
+enum PartnerType { HUMAN, FAIRY, ALL_PARTNERS };
 
-struct PartnerHandler {
+struct PartnerHandler
+{
     void reset();
     template <PartnerType p = ALL_PARTNERS>
-    void ptell(const std::string& message);
-    void parse_partner(std::istringstream& is);
-    void parse_ptell(std::istringstream& is, const Position& pos);
+    void ptell(const std::string &message);
+    void parse_partner(std::istringstream &is);
+    void parse_ptell(std::istringstream &is, const Position &pos);
 
     std::atomic<bool> isFairy;
-    std::atomic<bool> fast, sitRequested, partnerDead, weDead, weWin, weVirtualWin, weVirtualLoss;
+    std::atomic<bool> fast, sitRequested, partnerDead, weDead, weWin,
+        weVirtualWin, weVirtualLoss;
     std::atomic<TimePoint> time, opptime;
     Move moveRequested;
 };

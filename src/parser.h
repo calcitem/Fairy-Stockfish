@@ -25,33 +25,38 @@
 
 namespace Stockfish {
 
-class Config : public std::map<std::string, std::string> {
+class Config : public std::map<std::string, std::string>
+{
 public:
-    Config::iterator find (const std::string& s) {
+    Config::iterator find(const std::string &s)
+    {
         constexpr bool PrintOptions = false; // print config options?
         if (PrintOptions)
             std::cout << s << std::endl;
         consumedKeys.insert(s);
         return std::map<std::string, std::string>::find(s);
     }
-    const std::set<std::string>& get_comsumed_keys() {
-        return consumedKeys;
-    }
+    const std::set<std::string> &get_comsumed_keys() { return consumedKeys; }
+
 private:
     std::set<std::string> consumedKeys = {};
 };
 
 template <bool DoCheck>
-class VariantParser {
+class VariantParser
+{
 public:
-    VariantParser(const Config& c) : config (c) {};
-    Variant* parse();
-    Variant* parse(Variant* v);
+    VariantParser(const Config &c)
+        : config(c) {};
+    Variant *parse();
+    Variant *parse(Variant *v);
 
 private:
     Config config;
-    template <class T> void parse_attribute(const std::string& key, T& target);
-    void parse_attribute(const std::string& key, PieceType& target, std::string pieceToChar);
+    template <class T>
+    void parse_attribute(const std::string &key, T &target);
+    void parse_attribute(const std::string &key, PieceType &target,
+                         std::string pieceToChar);
 };
 
 } // namespace Stockfish
