@@ -116,7 +116,7 @@ constexpr bool Is64Bit = true;
 constexpr bool Is64Bit = false;
 #endif
 
-typedef uint64_t Key;
+typedef uint32_t Key;
 #ifdef LARGEBOARDS
 #if defined(__GNUC__) && defined(IS_64BIT)
 typedef unsigned __int128 Bitboard;
@@ -245,16 +245,16 @@ struct Bitboard
 #endif
 constexpr int SQUARE_BITS = 7;
 #else
-typedef uint64_t Bitboard;
+typedef uint32_t Bitboard;
 constexpr int SQUARE_BITS = 6;
 #endif
 
 #ifdef ALLVARS
 constexpr int MAX_MOVES = 4096;
 #else
-constexpr int MAX_MOVES = 1024;
+constexpr int MAX_MOVES = 72;
 #endif
-constexpr int MAX_PLY = 246;
+constexpr int MAX_PLY = 48;
 
 /// A move needs 16 bits to be stored
 ///
@@ -270,39 +270,14 @@ constexpr int MAX_PLY = 246;
 
 enum Move : int { MOVE_NONE, MOVE_NULL = 1 + (1 << SQUARE_BITS) };
 
-enum MoveType : int {
-    NORMAL,
-    EN_PASSANT = 1 << (2 * SQUARE_BITS),
-    CASTLING = 2 << (2 * SQUARE_BITS),
-    PROMOTION = 3 << (2 * SQUARE_BITS),
-    DROP = 4 << (2 * SQUARE_BITS),
-    PIECE_PROMOTION = 5 << (2 * SQUARE_BITS),
-    PIECE_DEMOTION = 6 << (2 * SQUARE_BITS),
-    SPECIAL = 7 << (2 * SQUARE_BITS),
-};
-
-constexpr int MOVE_TYPE_BITS = 4;
+enum MoveType : int { MOVETYPE_PLACE, MOVETYPE_MOVE, MOVETYPE_REMOVE };
 
 enum Color { WHITE, BLACK, COLOR_NB = 2 };
 
-enum CastlingRights {
-    NO_CASTLING,
-    WHITE_OO,
-    WHITE_OOO = WHITE_OO << 1,
-    BLACK_OO = WHITE_OO << 2,
-    BLACK_OOO = WHITE_OO << 3,
+// TODO
+enum class Action : uint16_t { none, select, place, remove };
 
-    KING_SIDE = WHITE_OO | BLACK_OO,
-    QUEEN_SIDE = WHITE_OOO | BLACK_OOO,
-    WHITE_CASTLING = WHITE_OO | WHITE_OOO,
-    BLACK_CASTLING = BLACK_OO | BLACK_OOO,
-    ANY_CASTLING = WHITE_CASTLING | BLACK_CASTLING,
-
-    CASTLING_RIGHT_NB = 16
-};
-
-enum CheckCount : int { CHECKS_0 = 0, CHECKS_NB = 11 };
-
+// TODO
 enum MaterialCounting {
     NO_MATERIAL_COUNTING,
     JANGGI_MATERIAL,
@@ -311,6 +286,7 @@ enum MaterialCounting {
     BLACK_DRAW_ODDS
 };
 
+// TODO
 enum CountingRule {
     NO_COUNTING,
     MAKRUK_COUNTING,
@@ -318,13 +294,15 @@ enum CountingRule {
     ASEAN_COUNTING
 };
 
+// TODO
 enum ChasingRule { NO_CHASING, AXF_CHASING };
 
+// TODO
 enum EnclosingRule { NO_ENCLOSING, REVERSI, ATAXX };
 
 enum OptBool { NO_VALUE, VALUE_FALSE, VALUE_TRUE };
 
-enum Phase { PHASE_ENDGAME, PHASE_MIDGAME = 128, MG = 0, EG = 1, PHASE_NB = 2 };
+enum Phase { PHASE_PLACING = 0, PHASE_MOVING = 1, PHASE_NB = 2 };
 
 enum ScaleFactor {
     SCALE_FACTOR_DRAW = 0,
@@ -356,81 +334,20 @@ enum Value : int {
     VALUE_MATE_IN_MAX_PLY = VALUE_MATE - MAX_PLY,
     VALUE_MATED_IN_MAX_PLY = -VALUE_MATE_IN_MAX_PLY,
 
-    PawnValueMg = 126,
-    PawnValueEg = 208,
-    KnightValueMg = 781,
-    KnightValueEg = 854,
-    BishopValueMg = 825,
-    BishopValueEg = 915,
-    RookValueMg = 1276,
-    RookValueEg = 1380,
-    QueenValueMg = 2538,
-    QueenValueEg = 2682,
-    FersValueMg = 420,
-    FersValueEg = 450,
-    AlfilValueMg = 350,
-    AlfilValueEg = 330,
-    FersAlfilValueMg = 700,
-    FersAlfilValueEg = 650,
-    SilverValueMg = 660,
-    SilverValueEg = 640,
-    AiwokValueMg = 2300,
-    AiwokValueEg = 2700,
-    BersValueMg = 1800,
-    BersValueEg = 1900,
-    ArchbishopValueMg = 2200,
-    ArchbishopValueEg = 2200,
-    ChancellorValueMg = 2300,
-    ChancellorValueEg = 2600,
-    AmazonValueMg = 2700,
-    AmazonValueEg = 2850,
-    KnibisValueMg = 1100,
-    KnibisValueEg = 1200,
-    BiskniValueMg = 750,
-    BiskniValueEg = 700,
-    KnirooValueMg = 1050,
-    KnirooValueEg = 1250,
-    RookniValueMg = 800,
-    RookniValueEg = 950,
-    ShogiPawnValueMg = 90,
-    ShogiPawnValueEg = 100,
-    LanceValueMg = 400,
-    LanceValueEg = 240,
-    ShogiKnightValueMg = 420,
-    ShogiKnightValueEg = 290,
-    GoldValueMg = 720,
-    GoldValueEg = 700,
-    DragonHorseValueMg = 1550,
-    DragonHorseValueEg = 1550,
-    ClobberPieceValueMg = 300,
-    ClobberPieceValueEg = 300,
-    BreakthroughPieceValueMg = 300,
-    BreakthroughPieceValueEg = 300,
-    ImmobilePieceValueMg = 50,
-    ImmobilePieceValueEg = 50,
-    CannonPieceValueMg = 800,
-    CannonPieceValueEg = 700,
-    JanggiCannonPieceValueMg = 800,
-    JanggiCannonPieceValueEg = 600,
-    SoldierValueMg = 200,
-    SoldierValueEg = 270,
-    HorseValueMg = 520,
-    HorseValueEg = 800,
-    ElephantValueMg = 300,
-    ElephantValueEg = 300,
-    JanggiElephantValueMg = 340,
-    JanggiElephantValueEg = 350,
-    BannerValueMg = 3400,
-    BannerValueEg = 3500,
-    WazirValueMg = 400,
-    WazirValueEg = 350,
-    CommonerValueMg = 700,
-    CommonerValueEg = 900,
-    CentaurValueMg = 1800,
-    CentaurValueEg = 1900,
+    VALUE_EACH_PIECE = 5,
+    VALUE_EACH_PIECE_INHAND = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_ONBOARD = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_PLACING_NEEDREMOVE = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_MOVING_NEEDREMOVE = VALUE_EACH_PIECE,
 
-    MidgameLimit = 15258,
-    EndgameLimit = 3915
+    VALUE_MTDF_WINDOW = VALUE_EACH_PIECE,
+    VALUE_PVS_WINDOW = VALUE_EACH_PIECE,
+
+    VALUE_PLACING_WINDOW = VALUE_EACH_PIECE_PLACING_NEEDREMOVE +
+                           (VALUE_EACH_PIECE_ONBOARD -
+                            VALUE_EACH_PIECE_INHAND) +
+                           1,
+    VALUE_MOVING_WINDOW = VALUE_EACH_PIECE_MOVING_NEEDREMOVE + 1,
 };
 
 constexpr int PIECE_TYPE_BITS = 6; // PIECE_TYPE_NB = pow(2, PIECE_TYPE_BITS)
@@ -879,33 +796,93 @@ inline Value mg_value(Score s)
 }
 
 #define ENABLE_BIT_OPERATORS_ON(T) \
-    constexpr T operator~(T d) { return (T) ~(int)d; } \
-    constexpr T operator|(T d1, T d2) { return (T)((int)d1 | (int)d2); } \
-    constexpr T operator&(T d1, T d2) { return (T)((int)d1 & (int)d2); } \
-    constexpr T operator^(T d1, T d2) { return (T)((int)d1 ^ (int)d2); } \
-    inline T &operator|=(T &d1, T d2) { return (T &)((int &)d1 |= (int)d2); } \
-    inline T &operator&=(T &d1, T d2) { return (T &)((int &)d1 &= (int)d2); } \
-    inline T &operator^=(T &d1, T d2) { return (T &)((int &)d1 ^= (int)d2); }
+    constexpr T operator~(T d) \
+    { \
+        return (T) ~(int)d; \
+    } \
+    constexpr T operator|(T d1, T d2) \
+    { \
+        return (T)((int)d1 | (int)d2); \
+    } \
+    constexpr T operator&(T d1, T d2) \
+    { \
+        return (T)((int)d1 & (int)d2); \
+    } \
+    constexpr T operator^(T d1, T d2) \
+    { \
+        return (T)((int)d1 ^ (int)d2); \
+    } \
+    inline T &operator|=(T &d1, T d2) \
+    { \
+        return (T &)((int &)d1 |= (int)d2); \
+    } \
+    inline T &operator&=(T &d1, T d2) \
+    { \
+        return (T &)((int &)d1 &= (int)d2); \
+    } \
+    inline T &operator^=(T &d1, T d2) \
+    { \
+        return (T &)((int &)d1 ^= (int)d2); \
+    }
 
 #define ENABLE_BASE_OPERATORS_ON(T) \
-    constexpr T operator+(T d1, int d2) { return T(int(d1) + d2); } \
-    constexpr T operator-(T d1, int d2) { return T(int(d1) - d2); } \
-    constexpr T operator-(T d) { return T(-int(d)); } \
-    inline T &operator+=(T &d1, int d2) { return d1 = d1 + d2; } \
-    inline T &operator-=(T &d1, int d2) { return d1 = d1 - d2; }
+    constexpr T operator+(T d1, int d2) \
+    { \
+        return T(int(d1) + d2); \
+    } \
+    constexpr T operator-(T d1, int d2) \
+    { \
+        return T(int(d1) - d2); \
+    } \
+    constexpr T operator-(T d) \
+    { \
+        return T(-int(d)); \
+    } \
+    inline T &operator+=(T &d1, int d2) \
+    { \
+        return d1 = d1 + d2; \
+    } \
+    inline T &operator-=(T &d1, int d2) \
+    { \
+        return d1 = d1 - d2; \
+    }
 
 #define ENABLE_INCR_OPERATORS_ON(T) \
-    inline T &operator++(T &d) { return d = T(int(d) + 1); } \
-    inline T &operator--(T &d) { return d = T(int(d) - 1); }
+    inline T &operator++(T &d) \
+    { \
+        return d = T(int(d) + 1); \
+    } \
+    inline T &operator--(T &d) \
+    { \
+        return d = T(int(d) - 1); \
+    }
 
 #define ENABLE_FULL_OPERATORS_ON(T) \
     ENABLE_BASE_OPERATORS_ON(T) \
-    constexpr T operator*(int i, T d) { return T(i * int(d)); } \
-    constexpr T operator*(T d, int i) { return T(int(d) * i); } \
-    constexpr T operator/(T d, int i) { return T(int(d) / i); } \
-    constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); } \
-    inline T &operator*=(T &d, int i) { return d = T(int(d) * i); } \
-    inline T &operator/=(T &d, int i) { return d = T(int(d) / i); }
+    constexpr T operator*(int i, T d) \
+    { \
+        return T(i * int(d)); \
+    } \
+    constexpr T operator*(T d, int i) \
+    { \
+        return T(int(d) * i); \
+    } \
+    constexpr T operator/(T d, int i) \
+    { \
+        return T(int(d) / i); \
+    } \
+    constexpr int operator/(T d1, T d2) \
+    { \
+        return int(d1) / int(d2); \
+    } \
+    inline T &operator*=(T &d, int i) \
+    { \
+        return d = T(int(d) * i); \
+    } \
+    inline T &operator/=(T &d, int i) \
+    { \
+        return d = T(int(d) / i); \
+    }
 
 ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Direction)

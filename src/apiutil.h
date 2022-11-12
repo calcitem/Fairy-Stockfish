@@ -34,26 +34,8 @@
 namespace Stockfish {
 
 enum Notation {
-    NOTATION_DEFAULT,
-    // https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
-    NOTATION_SAN,
-    NOTATION_LAN,
-    // https://en.wikipedia.org/wiki/Shogi_notation#Western_notation
-    NOTATION_SHOGI_HOSKING,       // Examples: P76, Sâ€?4
-    NOTATION_SHOGI_HODGES,        // Examples: P-7f, S*3d
-    NOTATION_SHOGI_HODGES_NUMBER, // Examples: P-76, S*34
-    // http://www.janggi.pl/janggi-notation/
-    NOTATION_JANGGI,
-    // https://en.wikipedia.org/wiki/Xiangqi#Notation
-    NOTATION_XIANGQI_WXF,
+    NOTATION_MILL,
 };
-
-inline Notation default_notation(const Variant *v)
-{
-    if (v->variantTemplate == "shogi")
-        return NOTATION_SHOGI_HODGES_NUMBER;
-    return NOTATION_SAN;
-}
 
 enum Termination {
     ONGOING,
@@ -78,6 +60,11 @@ inline bool is_shogi(Notation n)
 {
     return n == NOTATION_SHOGI_HOSKING || n == NOTATION_SHOGI_HODGES ||
            n == NOTATION_SHOGI_HODGES_NUMBER;
+}
+
+inline bool is_mill(Notation n)
+{
+    return n == NOTATION_MILL;
 }
 
 // is there more than one file with a pair of pieces?
