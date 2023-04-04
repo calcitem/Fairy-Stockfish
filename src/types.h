@@ -110,130 +110,11 @@ constexpr bool Is64Bit = false;
 #endif
 
 typedef uint64_t Key;
-#ifdef LARGEBOARDS
-#if defined(__GNUC__) && defined(IS_64BIT)
-typedef unsigned __int128 Bitboard;
-#else
-struct Bitboard {
-    uint64_t b64[2];
-
-    constexpr Bitboard() : b64 {0, 0} {}
-    constexpr Bitboard(uint64_t i) : b64 {0, i} {}
-    constexpr Bitboard(uint64_t hi, uint64_t lo) : b64 {hi, lo} {};
-
-    constexpr operator bool() const {
-        return b64[0] || b64[1];
-    }
-
-    constexpr operator long long unsigned () const {
-        return b64[1];
-    }
-
-    constexpr operator unsigned() const {
-        return b64[1];
-    }
-
-    constexpr Bitboard operator << (const unsigned int bits) const {
-        return Bitboard(  bits >= 64 ? b64[1] << (bits - 64)
-                        : bits == 0  ? b64[0]
-                        : ((b64[0] << bits) | (b64[1] >> (64 - bits))),
-                        bits >= 64 ? 0 : b64[1] << bits);
-    }
-
-    constexpr Bitboard operator >> (const unsigned int bits) const {
-        return Bitboard(bits >= 64 ? 0 : b64[0] >> bits,
-                          bits >= 64 ? b64[0] >> (bits - 64)
-                        : bits == 0  ? b64[1]
-                        : ((b64[1] >> bits) | (b64[0] << (64 - bits))));
-    }
-
-    constexpr Bitboard operator << (const int bits) const {
-        return *this << unsigned(bits);
-    }
-
-    constexpr Bitboard operator >> (const int bits) const {
-        return *this >> unsigned(bits);
-    }
-
-    constexpr bool operator == (const Bitboard y) const {
-        return (b64[0] == y.b64[0]) && (b64[1] == y.b64[1]);
-    }
-
-    constexpr bool operator != (const Bitboard y) const {
-        return !(*this == y);
-    }
-
-    inline Bitboard& operator |=(const Bitboard x) {
-        b64[0] |= x.b64[0];
-        b64[1] |= x.b64[1];
-        return *this;
-    }
-    inline Bitboard& operator &=(const Bitboard x) {
-        b64[0] &= x.b64[0];
-        b64[1] &= x.b64[1];
-        return *this;
-    }
-    inline Bitboard& operator ^=(const Bitboard x) {
-        b64[0] ^= x.b64[0];
-        b64[1] ^= x.b64[1];
-        return *this;
-    }
-
-    constexpr Bitboard operator ~ () const {
-        return Bitboard(~b64[0], ~b64[1]);
-    }
-
-    constexpr Bitboard operator - () const {
-        return Bitboard(-b64[0] - (b64[1] > 0), -b64[1]);
-    }
-
-    constexpr Bitboard operator | (const Bitboard x) const {
-        return Bitboard(b64[0] | x.b64[0], b64[1] | x.b64[1]);
-    }
-
-    constexpr Bitboard operator & (const Bitboard x) const {
-        return Bitboard(b64[0] & x.b64[0], b64[1] & x.b64[1]);
-    }
-
-    constexpr Bitboard operator ^ (const Bitboard x) const {
-        return Bitboard(b64[0] ^ x.b64[0], b64[1] ^ x.b64[1]);
-    }
-
-    constexpr Bitboard operator - (const Bitboard x) const {
-        return Bitboard(b64[0] - x.b64[0] - (b64[1] < x.b64[1]), b64[1] - x.b64[1]);
-    }
-
-    constexpr Bitboard operator - (const int x) const {
-        return *this - Bitboard(x);
-    }
-
-    inline Bitboard operator * (const Bitboard x) const {
-        uint64_t a_lo = (uint32_t)b64[1];
-        uint64_t a_hi = b64[1] >> 32;
-        uint64_t b_lo = (uint32_t)x.b64[1];
-        uint64_t b_hi = x.b64[1] >> 32;
-
-        uint64_t t1 = (a_hi * b_lo) + ((a_lo * b_lo) >> 32);
-        uint64_t t2 = (a_lo * b_hi) + (t1 & 0xFFFFFFFF);
-
-        return Bitboard(b64[0] * x.b64[1] + b64[1] * x.b64[0] + (a_hi * b_hi) + (t1 >> 32) + (t2 >> 32),
-                        (t2 << 32) + (a_lo * b_lo & 0xFFFFFFFF));
-   }
-};
-#endif
-constexpr int SQUARE_BITS = 7;
-#else
 typedef uint64_t Bitboard;
 constexpr int SQUARE_BITS = 6;
-#endif
 
-#ifdef ALLVARS
-constexpr int MAX_MOVES = 8192;
-constexpr int MAX_PLY   = 60;
-#else
 constexpr int MAX_MOVES = 1024;
 constexpr int MAX_PLY   = 246;
-#endif
 
 /// A move needs 16 bits to be stored
 ///
@@ -433,30 +314,6 @@ enum PieceSet : uint64_t {
   COMMON_STEP_PIECES = (1ULL << COMMONER) | (1ULL << FERS) | (1ULL << WAZIR) | (1ULL << BREAKTHROUGH_PIECE),
 };
 
-enum RiderType : int {
-  NO_RIDER = 0,
-  RIDER_BISHOP = 1 << 0,
-  RIDER_ROOK_H = 1 << 1,
-  RIDER_ROOK_V = 1 << 2,
-  RIDER_CANNON_H = 1 << 3,
-  RIDER_CANNON_V = 1 << 4,
-  RIDER_LAME_DABBABA = 1 << 5,
-  RIDER_HORSE = 1 << 6,
-  RIDER_ELEPHANT = 1 << 7,
-  RIDER_JANGGI_ELEPHANT = 1 << 8,
-  RIDER_CANNON_DIAG = 1 << 9,
-  RIDER_NIGHTRIDER = 1 << 10,
-  RIDER_GRASSHOPPER_H = 1 << 11,
-  RIDER_GRASSHOPPER_V = 1 << 12,
-  RIDER_GRASSHOPPER_D = 1 << 13,
-  HOPPING_RIDERS =  RIDER_CANNON_H | RIDER_CANNON_V | RIDER_CANNON_DIAG
-                  | RIDER_GRASSHOPPER_H | RIDER_GRASSHOPPER_V | RIDER_GRASSHOPPER_D,
-  LAME_LEAPERS = RIDER_LAME_DABBABA | RIDER_HORSE | RIDER_ELEPHANT | RIDER_JANGGI_ELEPHANT,
-  ASYMMETRICAL_RIDERS =  RIDER_HORSE | RIDER_JANGGI_ELEPHANT
-                       | RIDER_GRASSHOPPER_H | RIDER_GRASSHOPPER_V | RIDER_GRASSHOPPER_D,
-  NON_SLIDING_RIDERS = HOPPING_RIDERS | LAME_LEAPERS | RIDER_NIGHTRIDER,
-};
-
 extern Value PieceValue[PHASE_NB][PIECE_NB];
 extern Value EvalPieceValue[PHASE_NB][PIECE_NB]; // variant piece values for evaluation
 extern Value CapturePieceValue[PHASE_NB][PIECE_NB]; // variant piece values for captures/search
@@ -474,18 +331,6 @@ enum : int {
 };
 
 enum Square : int {
-#ifdef LARGEBOARDS
-  SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1, SQ_I1, SQ_J1, SQ_K1, SQ_L1,
-  SQ_A2, SQ_B2, SQ_C2, SQ_D2, SQ_E2, SQ_F2, SQ_G2, SQ_H2, SQ_I2, SQ_J2, SQ_K2, SQ_L2,
-  SQ_A3, SQ_B3, SQ_C3, SQ_D3, SQ_E3, SQ_F3, SQ_G3, SQ_H3, SQ_I3, SQ_J3, SQ_K3, SQ_L3,
-  SQ_A4, SQ_B4, SQ_C4, SQ_D4, SQ_E4, SQ_F4, SQ_G4, SQ_H4, SQ_I4, SQ_J4, SQ_K4, SQ_L4,
-  SQ_A5, SQ_B5, SQ_C5, SQ_D5, SQ_E5, SQ_F5, SQ_G5, SQ_H5, SQ_I5, SQ_J5, SQ_K5, SQ_L5,
-  SQ_A6, SQ_B6, SQ_C6, SQ_D6, SQ_E6, SQ_F6, SQ_G6, SQ_H6, SQ_I6, SQ_J6, SQ_K6, SQ_L6,
-  SQ_A7, SQ_B7, SQ_C7, SQ_D7, SQ_E7, SQ_F7, SQ_G7, SQ_H7, SQ_I7, SQ_J7, SQ_K7, SQ_L7,
-  SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8, SQ_I8, SQ_J8, SQ_K8, SQ_L8,
-  SQ_A9, SQ_B9, SQ_C9, SQ_D9, SQ_E9, SQ_F9, SQ_G9, SQ_H9, SQ_I9, SQ_J9, SQ_K9, SQ_L9,
-  SQ_A10, SQ_B10, SQ_C10, SQ_D10, SQ_E10, SQ_F10, SQ_G10, SQ_H10, SQ_I10, SQ_J10, SQ_K10, SQ_L10,
-#else
   SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1,
   SQ_A2, SQ_B2, SQ_C2, SQ_D2, SQ_E2, SQ_F2, SQ_G2, SQ_H2,
   SQ_A3, SQ_B3, SQ_C3, SQ_D3, SQ_E3, SQ_F3, SQ_G3, SQ_H3,
@@ -494,28 +339,18 @@ enum Square : int {
   SQ_A6, SQ_B6, SQ_C6, SQ_D6, SQ_E6, SQ_F6, SQ_G6, SQ_H6,
   SQ_A7, SQ_B7, SQ_C7, SQ_D7, SQ_E7, SQ_F7, SQ_G7, SQ_H7,
   SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8,
-#endif
   SQ_NONE,
 
   SQUARE_ZERO = 0,
-#ifdef LARGEBOARDS
-  SQUARE_NB = 120,
-  SQUARE_BIT_MASK = 127,
-#else
   SQUARE_NB = 64,
   SQUARE_BIT_MASK = 63,
-#endif
   SQ_MAX = SQUARE_NB - 1,
   SQUARE_NB_CHESS = 64,
   SQUARE_NB_SHOGI = 81,
 };
 
 enum Direction : int {
-#ifdef LARGEBOARDS
-  NORTH =  12,
-#else
   NORTH =  8,
-#endif
   EAST  =  1,
   SOUTH = -NORTH,
   WEST  = -EAST,
@@ -527,21 +362,13 @@ enum Direction : int {
 };
 
 enum File : int {
-#ifdef LARGEBOARDS
-  FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_I, FILE_J, FILE_K, FILE_L,
-#else
   FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H,
-#endif
   FILE_NB,
   FILE_MAX = FILE_NB - 1
 };
 
 enum Rank : int {
-#ifdef LARGEBOARDS
-  RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_9, RANK_10,
-#else
   RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8,
-#endif
   RANK_NB,
   RANK_MAX = RANK_NB - 1
 };
@@ -629,8 +456,6 @@ ENABLE_INCR_OPERATORS_ON(CheckCount)
 ENABLE_BASE_OPERATORS_ON(Score)
 
 ENABLE_BASE_OPERATORS_ON(PieceType)
-ENABLE_BIT_OPERATORS_ON(RiderType)
-ENABLE_BASE_OPERATORS_ON(RiderType)
 
 #undef ENABLE_FULL_OPERATORS_ON
 #undef ENABLE_INCR_OPERATORS_ON
@@ -651,7 +476,6 @@ inline PieceSet& operator|= (PieceSet& ps, PieceType pt) { return ps |= piece_se
 inline PieceSet& operator&= (PieceSet& ps1, PieceSet ps2) { return (PieceSet&)((uint64_t&)ps1 &= (uint64_t)ps2); }
 
 static_assert(piece_set(PAWN) & PAWN);
-static_assert(piece_set(KING) & KING);
 
 /// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
@@ -758,10 +582,6 @@ constexpr Rank relative_rank(Color c, Square s, Rank maxRank = RANK_8) {
 
 constexpr Square relative_square(Color c, Square s, Rank maxRank = RANK_8) {
   return make_square(file_of(s), relative_rank(c, s, maxRank));
-}
-
-constexpr Direction pawn_push(Color c) {
-  return c == WHITE ? NORTH : SOUTH;
 }
 
 constexpr MoveType type_of(Move m) {
