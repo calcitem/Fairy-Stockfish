@@ -1,5 +1,5 @@
-# Sanmill, a UCI chess playing engine derived from Glaurung 2.1
-# Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
+# Sanmill, a UCI mill playing engine derived from Stockfish
+# Copyright (C) 2019-2023 The Sanmill developers (see AUTHORS file)
 #
 # Sanmill is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
