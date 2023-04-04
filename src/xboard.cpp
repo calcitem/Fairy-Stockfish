@@ -128,17 +128,12 @@ namespace XBoard {
     for (const auto& m : MoveList<LEGAL>(pos))
     {
         Square from = from_sq(m), to = to_sq(m);
-        if (is_ok(from) && UCI::square(pos, from) == square && !is_pass(m))
+        if (is_ok(from) && UCI::square(pos, from) == square)
         {
-            if (type_of(m) == PROMOTION)
-                promotions |= to;
-            else if (pos.capture(m))
+            if (pos.capture(m))
                 captures |= to;
             else
             {
-                if (type_of(m) == CASTLING && !pos.is_chess960())
-                    to = make_square(to > from ? pos.castling_kingside_file()
-                                                : pos.castling_queenside_file(), rank_of(from));
                 quiets |= to;
             }
         }

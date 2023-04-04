@@ -35,26 +35,11 @@ namespace Sanmill {
 
 enum Notation {
     NOTATION_DEFAULT,
-    // https://en.wikipedia.org/wiki/Algebraic_notation_(chess)
-    NOTATION_SAN,
-    NOTATION_LAN,
-    // https://en.wikipedia.org/wiki/Shogi_notation#Western_notation
-    NOTATION_SHOGI_HOSKING, // Examples: P76, S’34
-    NOTATION_SHOGI_HODGES, // Examples: P-7f, S*3d
-    NOTATION_SHOGI_HODGES_NUMBER, // Examples: P-76, S*34
-    // http://www.janggi.pl/janggi-notation/
-    NOTATION_JANGGI,
-    // https://en.wikipedia.org/wiki/Xiangqi#Notation
-    NOTATION_XIANGQI_WXF,
-    // https://web.archive.org/web/20180817205956/http://bgsthai.com/2018/05/07/lawofthaichessc/
-    NOTATION_THAI_SAN,
-    NOTATION_THAI_LAN,
+    NOTATION_MILL,
 };
 
 inline Notation default_notation(const Variant* v) {
-    if (v->variantTemplate == "shogi")
-        return NOTATION_SHOGI_HODGES_NUMBER;
-    return NOTATION_SAN;
+    return NOTATION_MILL;
 }
 
 enum Termination {
@@ -67,8 +52,8 @@ enum Termination {
     VARIANT_END,
 };
 
-const std::array<std::string, 12> THAI_FILES = {"ก", "ข", "ค", "ง", "จ", "ฉ", "ช", "ญ", "ต", "ถ", "ธ", "น"};
-const std::array<std::string, 12> THAI_RANKS = {"๑", "๒", "๓", "๔", "๕", "๖", "๗", "๘", "๙", "๑๐", "๑๑", "๑๒"};
+const std::array<std::string, 3> MILL_FILES = {"A", "B", "C"};
+const std::array<std::string, 8> MILL_RANKS = {"1", "2", "3", "4", "5", "6", "7", "8"};
 
 namespace SAN {
 
@@ -79,14 +64,6 @@ enum Disambiguation {
     SQUARE_DISAMBIGUATION,
 };
 
-inline bool is_shogi(Notation n) {
-    return n == NOTATION_SHOGI_HOSKING || n == NOTATION_SHOGI_HODGES || n == NOTATION_SHOGI_HODGES_NUMBER;
-}
-
-inline bool is_thai(Notation n) {
-    return n == NOTATION_THAI_SAN || n == NOTATION_THAI_LAN;
-}
-
 // is there more than one file with a pair of pieces?
 inline bool multi_tandem(Bitboard b) {
     int tandems = 0;
@@ -96,24 +73,16 @@ inline bool multi_tandem(Bitboard b) {
     return tandems >= 2;
 }
 
-inline std::string piece_to_thai_char(Piece pc, bool promoted) {
+inline std::string piece_to_mill_char(Piece pc) {
     switch(type_of(pc)) {
-        case KING:
-            return "ข";
-        case KHON:
-            return "ค";
-        case FERS:
-            return promoted ? "ง" : "ม็";
-        case KNIGHT:
-            return "ม";
-        case ROOK:
-            return "ร";
-        case PAWN:
-            return "บ";
-        case AIWOK:
-            return "ว";
-        default:
+        case WHITE_PIECE:
+            return "O";
+        case BLACK_PIECE:
+            return "@";
+        case BAN:
             return "X";
+        default:
+            return "*";
     }
 }
 
@@ -155,7 +124,7 @@ inline std::string file(const Position& pos, Square s, Notation n) {
         return std::to_string((pos.side_to_move() == WHITE ? pos.max_file() - file_of(s) : file_of(s)) + 1);
     case NOTATION_THAI_SAN:
     case NOTATION_THAI_LAN:
-        return THAI_FILES[file_of(s)];
+        return MILL_FILES[file_of(s)];
     default:
         return std::string(1, char('a' + file_of(s)));
     }
@@ -183,7 +152,7 @@ inline std::string rank(const Position& pos, Square s, Notation n) {
     }
     case NOTATION_THAI_SAN:
     case NOTATION_THAI_LAN:
-        return THAI_RANKS[rank_of(s)];
+        return MILL_RANKS[rank_of(s)];
     default:
         return std::to_string(rank_of(s) + 1);
     }

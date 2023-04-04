@@ -110,19 +110,12 @@ constexpr bool Is64Bit = false;
 #endif
 
 typedef uint64_t Key;
-typedef uint64_t Bitboard;
-constexpr int SQUARE_BITS = 6;
+typedef uint32_t Bitboard;
 
-constexpr int MAX_MOVES = 1024;
-constexpr int MAX_PLY   = 246;
+constexpr int MAX_MOVES = 72;
+constexpr int MAX_PLY   = 48;
 
-/// A move needs 16 bits to be stored
-///
-/// bit  0- 5: destination square (from 0 to 63)
-/// bit  6-11: origin square (from 0 to 63)
-/// bit 12-13: promotion piece type - 2 (from KNIGHT-2 to QUEEN-2)
-/// bit 14-15: special move flag: promotion (1), en passant (2), castling (3)
-/// NOTE: en passant bit is set only when a pawn can be captured
+/// A move needs 32 bits to be stored
 ///
 /// Special cases are MOVE_NONE and MOVE_NULL. We can sneak these in because in
 /// any normal move destination square is always different from origin square
@@ -130,40 +123,19 @@ constexpr int MAX_PLY   = 246;
 
 enum Move : int {
   MOVE_NONE,
-  MOVE_NULL = 1 + (1 << SQUARE_BITS)
+  MOVE_NULL = 65
 };
 
 enum MoveType : int {
-  NORMAL,
-  EN_PASSANT          = 1 << (2 * SQUARE_BITS),
-  CASTLING           = 2 << (2 * SQUARE_BITS),
-  PROMOTION          = 3 << (2 * SQUARE_BITS),
-  DROP               = 4 << (2 * SQUARE_BITS),
-  PIECE_PROMOTION    = 5 << (2 * SQUARE_BITS),
-  PIECE_DEMOTION     = 6 << (2 * SQUARE_BITS),
-  SPECIAL            = 7 << (2 * SQUARE_BITS),
+  MOVETYPE_PLACE,
+  MOVETYPE_MOVE,
+  MOVETYPE_REMOVE,
 };
 
 constexpr int MOVE_TYPE_BITS = 4;
 
 enum Color {
   WHITE, BLACK, COLOR_NB = 2
-};
-
-enum CastlingRights {
-  NO_CASTLING,
-  WHITE_OO,
-  WHITE_OOO = WHITE_OO << 1,
-  BLACK_OO  = WHITE_OO << 2,
-  BLACK_OOO = WHITE_OO << 3,
-
-  KING_SIDE      = WHITE_OO  | BLACK_OO,
-  QUEEN_SIDE     = WHITE_OOO | BLACK_OOO,
-  WHITE_CASTLING = WHITE_OO  | WHITE_OOO,
-  BLACK_CASTLING = BLACK_OO  | BLACK_OOO,
-  ANY_CASTLING   = WHITE_CASTLING | BLACK_CASTLING,
-
-  CASTLING_RIGHT_NB = 16
 };
 
 enum CheckCount : int {
@@ -190,10 +162,37 @@ enum OptBool {
   NO_VALUE, VALUE_FALSE, VALUE_TRUE
 };
 
-enum Phase {
-  PHASE_ENDGAME,
-  PHASE_MIDGAME = 128,
-  MG = 0, EG = 1, PHASE_NB = 2
+enum class Phase { none, ready, placing, moving, gameOver };
+
+// enum class that represents an action that one player can take when it's
+// his turn at the board. The can be on of the following:
+//   - Select a piece on the board;
+//   - Place a piece on the board;
+//   - Move a piece on the board:
+//       - Slide a piece between two adjacent locations;
+//       - 'Jump' a piece to any empty location if the player has less than
+//         three or four pieces and mayFly is |true|;
+//   - Remove an opponent's piece after successfully closing a mill.
+enum class Action { none, select, place, remove };
+
+enum class GameOverReason {
+    none,
+
+    // A player wins by reducing the opponent to two pieces
+    // (where they could no longer form mills and thus be unable to win)
+    loseLessThanThree,
+
+    // A player wins by leaving them without a legal move.
+    loseNoWay,
+    loseBoardIsFull,
+
+    loseResign,
+    loseTimeOver,
+    drawThreefoldRepetition,
+    drawRule50,
+    drawEndgameRule50,
+    drawBoardIsFull,
+    drawNoWay,
 };
 
 enum ScaleFactor {
@@ -211,98 +210,61 @@ enum Bound {
 };
 
 enum Value : int {
-  VALUE_ZERO      = 0,
-  VALUE_DRAW      = 0,
-  VALUE_KNOWN_WIN = 10000,
-  VALUE_MATE      = 32000,
-  XBOARD_VALUE_MATE = 200000,
-  VALUE_VIRTUAL_MATE = 3000,
-  VALUE_VIRTUAL_MATE_IN_MAX_PLY = VALUE_VIRTUAL_MATE - MAX_PLY,
-  VALUE_INFINITE  = 32001,
-  VALUE_NONE      = 32002,
+    VALUE_ZERO = 0,
+    VALUE_DRAW = 0,
+#ifdef ENDGAME_LEARNING
+    VALUE_KNOWN_WIN = 25,
+#endif
+    VALUE_MATE = 80,
+    VALUE_UNIQUE = 100,
+    VALUE_INFINITE = 125,
+    VALUE_UNKNOWN = INT8_MIN,
+    VALUE_NONE = VALUE_UNKNOWN,
 
-  VALUE_TB_WIN_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
-  VALUE_TB_LOSS_IN_MAX_PLY = -VALUE_TB_WIN_IN_MAX_PLY,
-  VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - MAX_PLY,
-  VALUE_MATED_IN_MAX_PLY = -VALUE_MATE_IN_MAX_PLY,
+    VALUE_TB_WIN_IN_MAX_PLY = VALUE_MATE - 2 * MAX_PLY,
+    VALUE_TB_LOSS_IN_MAX_PLY = -VALUE_TB_WIN_IN_MAX_PLY,
+    VALUE_MATE_IN_MAX_PLY = VALUE_MATE - MAX_PLY,
+    VALUE_MATED_IN_MAX_PLY = -VALUE_MATE_IN_MAX_PLY,
 
-  PawnValueMg   = 126,   PawnValueEg   = 208,
-  KnightValueMg = 781,   KnightValueEg = 854,
-  BishopValueMg = 825,   BishopValueEg = 915,
-  RookValueMg   = 1276,  RookValueEg   = 1380,
-  QueenValueMg  = 2538,  QueenValueEg  = 2682,
-  FersValueMg              = 420,   FersValueEg              = 450,
-  AlfilValueMg             = 350,   AlfilValueEg             = 330,
-  FersAlfilValueMg         = 700,   FersAlfilValueEg         = 650,
-  SilverValueMg            = 660,   SilverValueEg            = 640,
-  AiwokValueMg             = 2300,  AiwokValueEg             = 2700,
-  BersValueMg              = 1800,  BersValueEg              = 1900,
-  ArchbishopValueMg        = 2200,  ArchbishopValueEg        = 2200,
-  ChancellorValueMg        = 2300,  ChancellorValueEg        = 2600,
-  AmazonValueMg            = 2700,  AmazonValueEg            = 2850,
-  KnibisValueMg            = 1100,  KnibisValueEg            = 1200,
-  BiskniValueMg            = 750,   BiskniValueEg            = 700,
-  KnirooValueMg            = 1050,  KnirooValueEg            = 1250,
-  RookniValueMg            = 800,   RookniValueEg            = 950,
-  ShogiPawnValueMg         =  90,   ShogiPawnValueEg         = 100,
-  LanceValueMg             = 400,   LanceValueEg             = 240,
-  ShogiKnightValueMg       = 420,   ShogiKnightValueEg       = 290,
-  GoldValueMg              = 720,   GoldValueEg              = 700,
-  DragonHorseValueMg       = 1550,  DragonHorseValueEg       = 1550,
-  ClobberPieceValueMg      = 300,   ClobberPieceValueEg      = 300,
-  BreakthroughPieceValueMg = 300,   BreakthroughPieceValueEg = 300,
-  ImmobilePieceValueMg     = 50,    ImmobilePieceValueEg     = 50,
-  CannonPieceValueMg       = 800,   CannonPieceValueEg       = 700,
-  JanggiCannonPieceValueMg = 800,   JanggiCannonPieceValueEg = 600,
-  SoldierValueMg           = 200,   SoldierValueEg           = 270,
-  HorseValueMg             = 520,   HorseValueEg             = 800,
-  ElephantValueMg          = 300,   ElephantValueEg          = 300,
-  JanggiElephantValueMg    = 340,   JanggiElephantValueEg    = 350,
-  BannerValueMg            = 3400,  BannerValueEg            = 3500,
-  WazirValueMg             = 400,   WazirValueEg             = 350,
-  CommonerValueMg          = 700,   CommonerValueEg          = 900,
-  CentaurValueMg           = 1800,  CentaurValueEg           = 1900,
+    PieceValue = 5,
+    VALUE_EACH_PIECE = PieceValue,
+    VALUE_EACH_PIECE_INHAND = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_ONBOARD = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_PLACING_NEEDREMOVE = VALUE_EACH_PIECE,
+    VALUE_EACH_PIECE_MOVING_NEEDREMOVE = VALUE_EACH_PIECE,
 
-  MidgameLimit  = 15258, EndgameLimit  = 3915
+    VALUE_MTDF_WINDOW = VALUE_EACH_PIECE,
+    VALUE_PVS_WINDOW = VALUE_EACH_PIECE,
+
+    VALUE_PLACING_WINDOW = VALUE_EACH_PIECE_PLACING_NEEDREMOVE +
+                           (VALUE_EACH_PIECE_ONBOARD -
+                            VALUE_EACH_PIECE_INHAND) +
+                           1,
+    VALUE_MOVING_WINDOW = VALUE_EACH_PIECE_MOVING_NEEDREMOVE + 1,
 };
-
-constexpr int PIECE_TYPE_BITS = 6; // PIECE_TYPE_NB = pow(2, PIECE_TYPE_BITS)
 
 enum PieceType {
-  NO_PIECE_TYPE, PAWN, KNIGHT, BISHOP, ROOK, QUEEN,
-  FERS, MET = FERS, ALFIL, FERS_ALFIL, SILVER, KHON = SILVER, AIWOK, BERS, DRAGON = BERS,
-  ARCHBISHOP, CHANCELLOR, AMAZON, KNIBIS, BISKNI, KNIROO, ROOKNI,
-  SHOGI_PAWN, LANCE, SHOGI_KNIGHT, GOLD, DRAGON_HORSE,
-  CLOBBER_PIECE, BREAKTHROUGH_PIECE, IMMOBILE_PIECE, CANNON, JANGGI_CANNON,
-  SOLDIER, HORSE, ELEPHANT, JANGGI_ELEPHANT, BANNER,
-  WAZIR, COMMONER, CENTAUR,
+    NO_PIECE_TYPE = 0,
+    WHITE_PIECE = 1,
+    BLACK_PIECE = 2,
+    BAN = 3,
+    ALL_PIECES = 0,
+    PIECE_TYPE_NB = 4,
 
-  CUSTOM_PIECE_1, CUSTOM_PIECE_2, CUSTOM_PIECE_3, CUSTOM_PIECE_4,
-  CUSTOM_PIECE_5, CUSTOM_PIECE_6, CUSTOM_PIECE_7, CUSTOM_PIECE_8,
-
-  PIECE_TYPE_NB = 1 << PIECE_TYPE_BITS,
-  KING = PIECE_TYPE_NB - 1,
-
-  // Aliases
-  CUSTOM_PIECES = CUSTOM_PIECE_1,
-  CUSTOM_PIECES_END = KING - 1,
-  CUSTOM_PIECES_ROYAL = CUSTOM_PIECES_END,
-  CUSTOM_PIECES_NB = CUSTOM_PIECES_END - CUSTOM_PIECES + 1,
-  FAIRY_PIECES = QUEEN + 1,
-  FAIRY_PIECES_END = CUSTOM_PIECES - 1,
-  ALL_PIECES = 0,
+    IN_HAND = 0x10,
+    ON_BOARD = 0x20,
 };
-static_assert(KING < PIECE_TYPE_NB, "KING exceeds PIECE_TYPE_NB.");
-static_assert(PIECE_TYPE_BITS <= 6, "PIECE_TYPE uses more than 6 bit");
-static_assert(!(PIECE_TYPE_NB & (PIECE_TYPE_NB - 1)), "PIECE_TYPE_NB is not a power of 2");
 
-static_assert(2 * SQUARE_BITS + MOVE_TYPE_BITS + 2 * PIECE_TYPE_BITS <= 32, "Move encoding uses more than 32 bits");
+enum Piece : uint8_t {
+    NO_PIECE = 0x00,
+    BAN_PIECE = 0x0F,
 
-enum Piece {
-  NO_PIECE,
-  W_PAWN = PAWN,                 W_KNIGHT, W_BISHOP, W_ROOK, W_QUEEN, W_KING = KING,
-  B_PAWN = PAWN + PIECE_TYPE_NB, B_KNIGHT, B_BISHOP, B_ROOK, B_QUEEN, B_KING = KING + PIECE_TYPE_NB,
-  PIECE_NB = 2 * PIECE_TYPE_NB
+    W_PIECE = 0x10,
+
+    B_PIECE = 0x20,
+
+    // Fix overflow
+    PIECE_NB = 64,
 };
 
 enum PieceSet : uint64_t {
@@ -331,39 +293,103 @@ enum : int {
 };
 
 enum Square : int {
-  SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1,
-  SQ_A2, SQ_B2, SQ_C2, SQ_D2, SQ_E2, SQ_F2, SQ_G2, SQ_H2,
-  SQ_A3, SQ_B3, SQ_C3, SQ_D3, SQ_E3, SQ_F3, SQ_G3, SQ_H3,
-  SQ_A4, SQ_B4, SQ_C4, SQ_D4, SQ_E4, SQ_F4, SQ_G4, SQ_H4,
-  SQ_A5, SQ_B5, SQ_C5, SQ_D5, SQ_E5, SQ_F5, SQ_G5, SQ_H5,
-  SQ_A6, SQ_B6, SQ_C6, SQ_D6, SQ_E6, SQ_F6, SQ_G6, SQ_H6,
-  SQ_A7, SQ_B7, SQ_C7, SQ_D7, SQ_E7, SQ_F7, SQ_G7, SQ_H7,
-  SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8,
-  SQ_NONE,
+    SQ_0 = 0,
+    SQ_1 = 1,
+    SQ_2 = 2,
+    SQ_3 = 3,
+    SQ_4 = 4,
+    SQ_5 = 5,
+    SQ_6 = 6,
+    SQ_7 = 7,
+    SQ_8 = 8,
+    SQ_9 = 9,
+    SQ_10 = 10,
+    SQ_11 = 11,
+    SQ_12 = 12,
+    SQ_13 = 13,
+    SQ_14 = 14,
+    SQ_15 = 15,
+    SQ_16 = 16,
+    SQ_17 = 17,
+    SQ_18 = 18,
+    SQ_19 = 19,
+    SQ_20 = 20,
+    SQ_21 = 21,
+    SQ_22 = 22,
+    SQ_23 = 23,
+    SQ_24 = 24,
+    SQ_25 = 25,
+    SQ_26 = 26,
+    SQ_27 = 27,
+    SQ_28 = 28,
+    SQ_29 = 29,
+    SQ_30 = 30,
+    SQ_31 = 31,
 
-  SQUARE_ZERO = 0,
-  SQUARE_NB = 64,
-  SQUARE_BIT_MASK = 63,
-  SQ_MAX = SQUARE_NB - 1,
-  SQUARE_NB_CHESS = 64,
-  SQUARE_NB_SHOGI = 81,
+    SQ_A1 = 8,
+    SQ_A2 = 9,
+    SQ_A3 = 10,
+    SQ_A4 = 11,
+    SQ_A5 = 12,
+    SQ_A6 = 13,
+    SQ_A7 = 14,
+    SQ_A8 = 15,
+    SQ_B1 = 16,
+    SQ_B2 = 17,
+    SQ_B3 = 18,
+    SQ_B4 = 19,
+    SQ_B5 = 20,
+    SQ_B6 = 21,
+    SQ_B7 = 22,
+    SQ_B8 = 23,
+    SQ_C1 = 24,
+    SQ_C2 = 25,
+    SQ_C3 = 26,
+    SQ_C4 = 27,
+    SQ_C5 = 28,
+    SQ_C6 = 29,
+    SQ_C7 = 30,
+    SQ_C8 = 31,
+
+    SQ_32 = 32,
+    SQ_33 = 33,
+    SQ_34 = 34,
+    SQ_35 = 35,
+    SQ_36 = 36,
+    SQ_37 = 37,
+    SQ_38 = 38,
+    SQ_39 = 39,
+
+    SQ_NONE = 0,
+
+    // The board consists of a grid with twenty-four intersections or points.
+    SQUARE_NB = 24,
+
+    SQUARE_ZERO = 0,
+    SQUARE_EXT_NB = 40,
+
+    SQ_BEGIN = SQ_8,
+    SQ_END = SQ_32
 };
 
-enum Direction : int {
-  NORTH =  8,
-  EAST  =  1,
-  SOUTH = -NORTH,
-  WEST  = -EAST,
+enum MoveDirection : int {
+    MD_CLOCKWISE = 0,
+    MD_BEGIN = MD_CLOCKWISE,
+    MD_ANTICLOCKWISE = 1,
+    MD_INWARD = 2,
+    MD_OUTWARD = 3,
+    MD_NB = 4
+};
 
-  NORTH_EAST = NORTH + EAST,
-  SOUTH_EAST = SOUTH + EAST,
-  SOUTH_WEST = SOUTH + WEST,
-  NORTH_WEST = NORTH + WEST
+enum LineDirection : int {
+    LD_HORIZONTAL = 0,
+    LD_VERTICAL = 1,
+    LD_SLASH = 2,
+    LD_NB = 3
 };
 
 enum File : int {
-  FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H,
-  FILE_NB,
+  FILE_A, FILE_B, FILE_C,
   FILE_MAX = FILE_NB - 1
 };
 
@@ -444,7 +470,7 @@ inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
 ENABLE_FULL_OPERATORS_ON(Value)
-ENABLE_FULL_OPERATORS_ON(Direction)
+ENABLE_INCR_OPERATORS_ON(MoveDirection)
 
 ENABLE_INCR_OPERATORS_ON(Piece)
 ENABLE_INCR_OPERATORS_ON(PieceType)
@@ -477,12 +503,6 @@ inline PieceSet& operator&= (PieceSet& ps1, PieceSet ps2) { return (PieceSet&)((
 
 static_assert(piece_set(PAWN) & PAWN);
 
-/// Additional operators to add a Direction to a Square
-constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
-constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d)); }
-inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
-inline Square& operator-=(Square& s, Direction d) { return s = s - d; }
-
 /// Only declared but not defined. We don't want to multiply two scores due to
 /// a very high risk of overflow. So user should explicitly convert to integer.
 Score operator*(Score, Score) = delete;
@@ -510,23 +530,16 @@ inline Score operator*(Score s, bool b) {
 }
 
 constexpr Color operator~(Color c) {
-  return Color(c ^ BLACK); // Toggle color
-}
-
-constexpr Square flip_rank(Square s, Rank maxRank = RANK_8) { // Swap A1 <-> A8
-  return Square(s + NORTH * (maxRank - 2 * (s / NORTH)));
-}
-
-constexpr Square flip_file(Square s, File maxFile = FILE_H) { // Swap A1 <-> H1
-  return Square(s + maxFile - 2 * (s % NORTH));
+  return static_cast<Color>(c ^ 3); // Toggle color
 }
 
 constexpr Piece operator~(Piece pc) {
-  return Piece(pc ^ PIECE_TYPE_NB);  // Swap color of piece B_KNIGHT <-> W_KNIGHT
-}
+  // Swap color of piece
+  if (pc == W_PIECE) {
+    return B_PIECE;
+  }
 
-constexpr CastlingRights operator&(Color c, CastlingRights cr) {
-  return CastlingRights((c == WHITE ? WHITE_CASTLING : BLACK_CASTLING) & cr);
+  return W_PIECE;
 }
 
 constexpr Value mate_in(int ply) {
@@ -544,123 +557,94 @@ constexpr Value convert_mate_value(Value v, int ply) {
 }
 
 constexpr Square make_square(File f, Rank r) {
-  return Square(r * FILE_NB + f);
+  return static_cast<Square>((f << 3) + r - 1);
+}
+
+constexpr Piece make_piece(Color c)
+{
+    return static_cast<Piece>(c << 4);
 }
 
 constexpr Piece make_piece(Color c, PieceType pt) {
-  return Piece((c << PIECE_TYPE_BITS) + pt);
+    if (pt == WHITE_PIECE || pt == BLACK_PIECE) {
+        return make_piece(c);
+    }
+
+    if (pt == BAN) {
+        return BAN_PIECE;
+    }
+
+    return NO_PIECE;
 }
 
 constexpr PieceType type_of(Piece pc) {
-  return PieceType(pc & (PIECE_TYPE_NB - 1));
+    if (pc == BAN_PIECE) {
+        return BAN;
+    }
+
+    if (color_of(pc) == WHITE) {
+        return WHITE_PIECE;
+    }
+
+    if (color_of(pc) == BLACK) {
+        return BLACK_PIECE;
+    }
+
+    return NO_PIECE_TYPE;
 }
 
 inline Color color_of(Piece pc) {
   assert(pc != NO_PIECE);
-  return Color(pc >> PIECE_TYPE_BITS);
+  return static_cast<Color>(pc >> 4);
 }
 
 constexpr bool is_ok(Square s) {
-  return s >= SQ_A1 && s <= SQ_MAX;
+  return s == SQ_NONE || (s >= SQ_BEGIN && s < SQ_END);
 }
 
 constexpr File file_of(Square s) {
-  return File(s % FILE_NB);
+  return static_cast<File>(s >> 3);
 }
 
 constexpr Rank rank_of(Square s) {
-  return Rank(s / FILE_NB);
-}
-
-constexpr Rank relative_rank(Color c, Rank r, Rank maxRank = RANK_8) {
-  return Rank(c == WHITE ? r : maxRank - r);
-}
-
-constexpr Rank relative_rank(Color c, Square s, Rank maxRank = RANK_8) {
-  return relative_rank(c, rank_of(s), maxRank);
-}
-
-constexpr Square relative_square(Color c, Square s, Rank maxRank = RANK_8) {
-  return make_square(file_of(s), relative_rank(c, s, maxRank));
+  return static_cast<Rank>((s & 0x07) + 1);
 }
 
 constexpr MoveType type_of(Move m) {
-  return MoveType(m & (15 << (2 * SQUARE_BITS)));
+    if (m < 0) {
+        return MOVETYPE_REMOVE;
+    }
+    if (m & 0x1f00) {
+        return MOVETYPE_MOVE;
+    }
+
+    return MOVETYPE_PLACE; // m & 0x00ff
 }
 
 constexpr Square to_sq(Move m) {
-  return Square(m & SQUARE_BIT_MASK);
+    if (m < 0)
+        m = static_cast<Move>(-m);
+
+    return static_cast<Square>(m & 0x00FF);
 }
 
 constexpr Square from_sq(Move m) {
-  return type_of(m) == DROP ? SQ_NONE : Square((m >> SQUARE_BITS) & SQUARE_BIT_MASK);
-}
+    if (m < 0)
+        m = static_cast<Move>(-m);
 
-inline int from_to(Move m) {
- return to_sq(m) + (from_sq(m) << SQUARE_BITS);
-}
-
-inline PieceType promotion_type(Move m) {
-  return type_of(m) == PROMOTION ? PieceType((m >> (2 * SQUARE_BITS + MOVE_TYPE_BITS)) & (PIECE_TYPE_NB - 1)) : NO_PIECE_TYPE;
-}
-
-inline PieceType gating_type(Move m) {
-  return PieceType((m >> (2 * SQUARE_BITS + MOVE_TYPE_BITS)) & (PIECE_TYPE_NB - 1));
-}
-
-inline Square gating_square(Move m) {
-  return Square((m >> (2 * SQUARE_BITS + MOVE_TYPE_BITS + PIECE_TYPE_BITS)) & SQUARE_BIT_MASK);
-}
-
-inline bool is_gating(Move m) {
-  return gating_type(m) && (type_of(m) == NORMAL || type_of(m) == CASTLING);
-}
-
-inline bool is_pass(Move m) {
-  return type_of(m) == SPECIAL && from_sq(m) == to_sq(m);
+    return static_cast<Square>(m >> 8);
 }
 
 constexpr Move make_move(Square from, Square to) {
-  return Move((from << SQUARE_BITS) + to);
-}
-
-template<MoveType T>
-inline Move make(Square from, Square to, PieceType pt = NO_PIECE_TYPE) {
-  return Move((pt << (2 * SQUARE_BITS + MOVE_TYPE_BITS)) + T + (from << SQUARE_BITS) + to);
-}
-
-constexpr Move make_drop(Square to, PieceType pt_in_hand, PieceType pt_dropped) {
-  return Move((pt_in_hand << (2 * SQUARE_BITS + MOVE_TYPE_BITS + PIECE_TYPE_BITS)) + (pt_dropped << (2 * SQUARE_BITS + MOVE_TYPE_BITS)) + DROP + to);
+  return static_cast<Move>((from << 8) + to);
 }
 
 constexpr Move reverse_move(Move m) {
   return make_move(to_sq(m), from_sq(m));
 }
 
-template<MoveType T>
-constexpr Move make_gating(Square from, Square to, PieceType pt, Square gate) {
-  return Move((gate << (2 * SQUARE_BITS + MOVE_TYPE_BITS + PIECE_TYPE_BITS)) + (pt << (2 * SQUARE_BITS + MOVE_TYPE_BITS)) + T + (from << SQUARE_BITS) + to);
-}
-
-constexpr PieceType dropped_piece_type(Move m) {
-  return PieceType((m >> (2 * SQUARE_BITS + MOVE_TYPE_BITS)) & (PIECE_TYPE_NB - 1));
-}
-
-constexpr PieceType in_hand_piece_type(Move m) {
-  return PieceType((m >> (2 * SQUARE_BITS + MOVE_TYPE_BITS + PIECE_TYPE_BITS)) & (PIECE_TYPE_NB - 1));
-}
-
-inline bool is_custom(PieceType pt) {
-  return pt >= CUSTOM_PIECES && pt <= CUSTOM_PIECES_END;
-}
-
 inline bool is_ok(Move m) {
-  return from_sq(m) != to_sq(m) || type_of(m) == PROMOTION || type_of(m) == SPECIAL; // Catch MOVE_NULL and MOVE_NONE
-}
-
-inline int dist(Direction d) {
-  return std::abs(d % NORTH) < NORTH / 2 ? std::max(std::abs(d / NORTH), int(std::abs(d % NORTH)))
-      : std::max(std::abs(d / NORTH) + 1, int(NORTH - std::abs(d % NORTH)));
+  return from_sq(m) != to_sq(m); // Catch MOVE_NULL and MOVE_NONE
 }
 
 /// Based on a congruential pseudo random number generator
