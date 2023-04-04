@@ -53,13 +53,13 @@ jobs:
         run: |
           make clean
           make -j2 ARCH=x86-64 nnue=yes debug=yes build
-          ./stockfish bench
+          ./sanmill bench
 
       - name: Test NNUE largeboards
         run: |
           make clean
           make -j2 ARCH=x86-64 largeboards=yes nnue=yes debug=yes build
-          ./stockfish bench
+          ./sanmill bench
 
       - name: Build all variants
         run: |
@@ -72,7 +72,7 @@ jobs:
 
       - name: Test variants.ini
         run: |
-          ! ./stockfish check variants.ini 2>&1 >/dev/null | grep -v "Parsing variant"
+          ! ./sanmill check variants.ini 2>&1 >/dev/null | grep -v "Parsing variant"
 
       - name: Test variant perft
         run: |
@@ -80,10 +80,10 @@ jobs:
 
       - name: Test variant bench
         run: |
-          ./stockfish bench xiangqi
-          ./stockfish bench shogi
-          ./stockfish bench capablanca
-          ./stockfish bench sittuyin
+          ./sanmill bench xiangqi
+          ./sanmill bench shogi
+          ./sanmill bench capablanca
+          ./sanmill bench sittuyin
 
       - name: Test 32bit largeboards
         run: |

@@ -1,6 +1,6 @@
 /*
   Based on Jean-Francois Romang work
-  https://github.com/jromang/Stockfish/blob/pyfish/src/pyfish.cpp
+  https://github.com/jromang/Sanmill/blob/pyfish/src/pyfish.cpp
 */
 
 #include <Python.h>
@@ -20,7 +20,7 @@
 #include "variant.h"
 #include "apiutil.h"
 
-using namespace Stockfish;
+using namespace Sanmill;
 
 static PyObject* PyFFishError;
 
@@ -259,7 +259,7 @@ extern "C" PyObject* pyffish_givesCheck(PyObject* self, PyObject *args) {
 
     StateListPtr states(new std::deque<StateInfo>(1));
     buildPosition(pos, states, variant, fen, moveList, chess960);
-    return Py_BuildValue("O", Stockfish::checked(pos) ? Py_True : Py_False);
+    return Py_BuildValue("O", Sanmill::checked(pos) ? Py_True : Py_False);
 }
 
 // INPUT variant, fen, move list, move
@@ -371,7 +371,7 @@ extern "C" PyObject* pyffish_validateFen(PyObject* self, PyObject *args) {
 
 static PyMethodDef PyFFishMethods[] = {
     {"version", (PyCFunction)pyffish_version, METH_NOARGS, "Get package version."},
-    {"info", (PyCFunction)pyffish_info, METH_NOARGS, "Get Stockfish version info."},
+    {"info", (PyCFunction)pyffish_info, METH_NOARGS, "Get Sanmill version info."},
     {"variants", (PyCFunction)pyffish_variants, METH_NOARGS, "Get supported variants."},
     {"set_option", (PyCFunction)pyffish_setOption, METH_VARARGS, "Set UCI option."},
     {"load_variant_config", (PyCFunction)pyffish_loadVariantConfig, METH_VARARGS, "Load variant configuration."},
@@ -395,7 +395,7 @@ static PyMethodDef PyFFishMethods[] = {
 static PyModuleDef pyffishmodule = {
     PyModuleDef_HEAD_INIT,
     "pyffish",
-    "Fairy-Stockfish extension module.",
+    "Fairy-Sanmill extension module.",
     -1,
     PyFFishMethods,
 };
@@ -430,7 +430,7 @@ PyMODINIT_FUNC PyInit_pyffish() {
     // validation
     PyModule_AddObject(module, "FEN_OK", PyLong_FromLong(FEN::FEN_OK));
 
-    // initialize stockfish
+    // initialize sanmill
     pieceMap.init();
     variants.init();
     UCI::init(Options);

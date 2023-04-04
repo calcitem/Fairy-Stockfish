@@ -1,13 +1,13 @@
 /*
-  Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+  Sanmill, a UCI chess playing engine derived from Glaurung 2.1
+  Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
 
-  Stockfish is free software: you can redistribute it and/or modify
+  Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Stockfish is distributed in the hope that it will be useful,
+  Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -23,14 +23,14 @@
 
 #include "types.h"
 
-namespace Stockfish {
+namespace Sanmill {
 
 namespace Bitbases {
 
 void init();
 bool probe(Square wksq, Square wpsq, Square bksq, Color us);
 
-} // namespace Stockfish::Bitbases
+} // namespace Sanmill::Bitbases
 
 namespace Bitboards {
 
@@ -38,7 +38,7 @@ void init_pieces();
 void init();
 std::string pretty(Bitboard b);
 
-} // namespace Stockfish::Bitboards
+} // namespace Sanmill::Bitboards
 
 #ifdef LARGEBOARDS
 constexpr Bitboard AllSquares = ((~Bitboard(0)) >> 8);
@@ -782,6 +782,6 @@ inline PieceType pop_msb(PieceSet& ps) {
   return pt;
 }
 
-} // namespace Stockfish
+} // namespace Sanmill
 
 #endif // #ifndef BITBOARD_H_INCLUDED

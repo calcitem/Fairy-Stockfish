@@ -1,13 +1,13 @@
 /*
-  Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+  Sanmill, a UCI chess playing engine derived from Glaurung 2.1
+  Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
 
-  Stockfish is free software: you can redistribute it and/or modify
+  Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Stockfish is distributed in the hope that it will be useful,
+  Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -23,7 +23,7 @@
 #include "position.h"
 #include "types.h"
 
-namespace Stockfish::Pawns {
+namespace Sanmill::Pawns {
 
 /// Pawns::Entry contains various information about a pawn structure. A lookup
 /// to the pawn hash table (performed by calling the probe function) returns a
@@ -65,6 +65,6 @@ typedef HashTable<Entry, 131072> Table;
 
 Entry* probe(const Position& pos);
 
-} // namespace Stockfish::Pawns
+} // namespace Sanmill::Pawns
 
 #endif // #ifndef PAWNS_H_INCLUDED

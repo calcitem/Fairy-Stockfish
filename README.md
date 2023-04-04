@@ -1,36 +1,36 @@
-# Fairy-Stockfish
+# Fairy-Sanmill
 
 ## Overview
 
-[![Build Status](https://github.com/fairy-stockfish/Fairy-Stockfish/workflows/Release/badge.svg?branch=master)](https://github.com/fairy-stockfish/Fairy-Stockfish/actions?query=workflow%3ARelease)
-[![Build Status](https://github.com/fairy-stockfish/Fairy-Stockfish/workflows/fairy/badge.svg?branch=master)](https://github.com/fairy-stockfish/Fairy-Stockfish/actions?query=workflow%3Afairy)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/fairy-stockfish/Fairy-Stockfish?branch=master&svg=true)](https://ci.appveyor.com/project/ianfab/Fairy-Stockfish/branch/master)
+[![Build Status](https://github.com/fairy-sanmill/Fairy-Sanmill/workflows/Release/badge.svg?branch=master)](https://github.com/fairy-sanmill/Fairy-Sanmill/actions?query=workflow%3ARelease)
+[![Build Status](https://github.com/fairy-sanmill/Fairy-Sanmill/workflows/fairy/badge.svg?branch=master)](https://github.com/fairy-sanmill/Fairy-Sanmill/actions?query=workflow%3Afairy)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/fairy-sanmill/Fairy-Sanmill?branch=master&svg=true)](https://ci.appveyor.com/project/ianfab/Fairy-Sanmill/branch/master)
 [![PyPI version](https://badge.fury.io/py/pyffish.svg)](https://badge.fury.io/py/pyffish)
 [![NPM version](https://img.shields.io/npm/v/ffish.svg?sanitize=true)](https://www.npmjs.com/package/ffish)
 
-Fairy-Stockfish is a chess variant engine derived from [Stockfish](https://github.com/official-stockfish/Stockfish/) designed for the support of fairy chess variants and easy extensibility with more games. It can play various regional, historical, and modern chess variants as well as [games with user-defined rules](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Variant-configuration). For [compatibility with graphical user interfaces](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Graphical-user-interfaces) it supports the UCI, UCCI, USI, UCI-cyclone, and CECP/XBoard protocols.
+Fairy-Sanmill is a chess variant engine derived from [Sanmill](https://github.com/official-sanmill/Sanmill/) designed for the support of fairy chess variants and easy extensibility with more games. It can play various regional, historical, and modern chess variants as well as [games with user-defined rules](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Variant-configuration). For [compatibility with graphical user interfaces](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Graphical-user-interfaces) it supports the UCI, UCCI, USI, UCI-cyclone, and CECP/XBoard protocols.
 
-The goal of the project is to create an engine supporting a large variety of chess-like games, equipped with the powerful search of Stockfish. Despite its generality the [playing strength](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Playing-strength) is on a very high level in almost all supported variants. Due to its multi-protocol support Fairy-Stockfish works with almost any chess variant GUI.
+The goal of the project is to create an engine supporting a large variety of chess-like games, equipped with the powerful search of Sanmill. Despite its generality the [playing strength](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Playing-strength) is on a very high level in almost all supported variants. Due to its multi-protocol support Fairy-Sanmill works with almost any chess variant GUI.
 
 ## Installation
-You can download the [Windows executable](https://github.com/fairy-stockfish/Fairy-Stockfish/releases/latest/download/fairy-stockfish-largeboard_x86-64.exe) or [Linux binary](https://github.com/fairy-stockfish/Fairy-Stockfish/releases/latest/download/fairy-stockfish-largeboard_x86-64) from the [latest release](https://github.com/fairy-stockfish/Fairy-Stockfish/releases/latest) or [compile the program from source](https://github.com/fairy-stockfish/Fairy-Stockfish#compiling-stockfish-yourself-from-the-sources). The program comes without a graphical user interface, so you perhaps want to use it together with a [compatible GUI](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Graphical-user-interfaces), or [play against it online](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Online) at [pychess](https://www.pychess.org/), [lishogi](https://lishogi.org/@/Fairy-Stockfish), or [lichess](https://lichess.org/@/Fairy-Stockfish). Read more about [how to use](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Usage) Fairy-Stockfish in the wiki.
+You can download the [Windows executable](https://github.com/fairy-sanmill/Fairy-Sanmill/releases/latest/download/fairy-sanmill-largeboard_x86-64.exe) or [Linux binary](https://github.com/fairy-sanmill/Fairy-Sanmill/releases/latest/download/fairy-sanmill-largeboard_x86-64) from the [latest release](https://github.com/fairy-sanmill/Fairy-Sanmill/releases/latest) or [compile the program from source](https://github.com/fairy-sanmill/Fairy-Sanmill#compiling-sanmill-yourself-from-the-sources). The program comes without a graphical user interface, so you perhaps want to use it together with a [compatible GUI](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Graphical-user-interfaces), or [play against it online](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Online) at [pychess](https://www.pychess.org/), [lishogi](https://lishogi.org/@/Fairy-Sanmill), or [lichess](https://lichess.org/@/Fairy-Sanmill). Read more about [how to use](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Usage) Fairy-Sanmill in the wiki.
 
-If you want to preview the functionality of Fairy-Stockfish before downloading, you can try it out on the [Fairy-Stockfish playground](https://fairyground.vercel.app/) in the browser.
+If you want to preview the functionality of Fairy-Sanmill before downloading, you can try it out on the [Fairy-Sanmill playground](https://fairyground.vercel.app/) in the browser.
 
-Optional NNUE evaluation parameter files to improve playing strength for many variants are in the [list of NNUE networks](https://fairy-stockfish.github.io/nnue/#current-best-nnue-networks).
-For the regional variants Xiangqi, Janggi, and Makruk [dedicated releases with built-in NNUE networks](https://github.com/fairy-stockfish/Fairy-Stockfish-NNUE) are available. See the [wiki](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/NNUE) for more details on NNUE.
+Optional NNUE evaluation parameter files to improve playing strength for many variants are in the [list of NNUE networks](https://fairy-sanmill.github.io/nnue/#current-best-nnue-networks).
+For the regional variants Xiangqi, Janggi, and Makruk [dedicated releases with built-in NNUE networks](https://github.com/fairy-sanmill/Fairy-Sanmill-NNUE) are available. See the [wiki](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/NNUE) for more details on NNUE.
 
 ## Contributing
 
-If you like this project, please support its development via [patreon](https://www.patreon.com/ianfab) or [paypal](https://paypal.me/FairyStockfish), by [contributing CPU time](https://github.com/ianfab/fishtest/wiki) to the framework for testing of code improvements, or by [contributing to the code](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Contributing) or documentation. An [introduction to the code base](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Understanding-the-code) can be found in the wiki.
+If you like this project, please support its development via [patreon](https://www.patreon.com/ianfab) or [paypal](https://paypal.me/FairySanmill), by [contributing CPU time](https://github.com/ianfab/fishtest/wiki) to the framework for testing of code improvements, or by [contributing to the code](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Contributing) or documentation. An [introduction to the code base](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Understanding-the-code) can be found in the wiki.
 
 ## Supported games
 
-The games currently supported besides chess are listed below. Fairy-Stockfish can also play user-defined variants loaded via a variant configuration file, see the file [`src/variants.ini`](https://github.com/ianfab/Fairy-Stockfish/blob/master/src/variants.ini) and the [wiki](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki/Variant-configuration).
+The games currently supported besides chess are listed below. Fairy-Sanmill can also play user-defined variants loaded via a variant configuration file, see the file [`src/variants.ini`](https://github.com/ianfab/Fairy-Sanmill/blob/master/src/variants.ini) and the [wiki](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki/Variant-configuration).
 
 ### Regional and historical games
 - [Xiangqi](https://en.wikipedia.org/wiki/Xiangqi), [Manchu](https://en.wikipedia.org/wiki/Manchu_chess), [Minixiangqi](http://mlwi.magix.net/bg/minixiangqi.htm), [Supply chess](https://en.wikipedia.org/wiki/Xiangqi#Variations)
-- [Shogi](https://en.wikipedia.org/wiki/Shogi), [Shogi variants](https://github.com/fairy-stockfish/Fairy-Stockfish#shogi-variants)
+- [Shogi](https://en.wikipedia.org/wiki/Shogi), [Shogi variants](https://github.com/fairy-sanmill/Fairy-Sanmill#shogi-variants)
 - [Janggi](https://en.wikipedia.org/wiki/Janggi)
 - [Makruk](https://en.wikipedia.org/wiki/Makruk), [ASEAN](http://hgm.nubati.net/rules/ASEAN.html), Makpong, Ai-Wok
 - [Ouk Chatrang](https://en.wikipedia.org/wiki/Makruk#Cambodian_chess), [Kar Ouk](https://en.wikipedia.org/wiki/Makruk#Cambodian_chess)
@@ -85,40 +85,40 @@ The games currently supported besides chess are listed below. Fairy-Stockfish ca
 
 ## Help
 
-See the [Fairy-Stockfish Wiki](https://github.com/fairy-stockfish/Fairy-Stockfish/wiki) for more info, or if the required information is not available, open an [issue](https://github.com/fairy-stockfish/Fairy-Stockfish/issues) or join our [discord server](https://discord.gg/FYUGgmCFB4).
+See the [Fairy-Sanmill Wiki](https://github.com/fairy-sanmill/Fairy-Sanmill/wiki) for more info, or if the required information is not available, open an [issue](https://github.com/fairy-sanmill/Fairy-Sanmill/issues) or join our [discord server](https://discord.gg/FYUGgmCFB4).
 
 ## Bindings
 
-Besides the C++ engine, this project also includes bindings for other programming languages in order to be able to use it as a library for chess variants. They support move, SAN, and FEN generation, as well as checking of game end conditions for all variants supported by Fairy-Stockfish. Since the bindings are using the C++ code, they are very performant compared to libraries directly written in the respective target language.
+Besides the C++ engine, this project also includes bindings for other programming languages in order to be able to use it as a library for chess variants. They support move, SAN, and FEN generation, as well as checking of game end conditions for all variants supported by Fairy-Sanmill. Since the bindings are using the C++ code, they are very performant compared to libraries directly written in the respective target language.
 
 ### Python
 
-The python binding [pyffish](https://pypi.org/project/pyffish/) contributed by [@gbtami](https://github.com/gbtami) is implemented in [pyffish.cpp](https://github.com/fairy-stockfish/Fairy-Stockfish/blob/master/src/pyffish.cpp). It is e.g. used in the backend for the [pychess server](https://github.com/gbtami/pychess-variants).
+The python binding [pyffish](https://pypi.org/project/pyffish/) contributed by [@gbtami](https://github.com/gbtami) is implemented in [pyffish.cpp](https://github.com/fairy-sanmill/Fairy-Sanmill/blob/master/src/pyffish.cpp). It is e.g. used in the backend for the [pychess server](https://github.com/gbtami/pychess-variants).
 
 ### Javascript
 
-The javascript binding [ffish.js](https://www.npmjs.com/package/ffish) contributed by [@QueensGambit](https://github.com/QueensGambit) is implemented in [ffishjs.cpp](https://github.com/fairy-stockfish/Fairy-Stockfish/blob/master/src/ffishjs.cpp). The compilation/binding to javascript is done using emscripten, see the [readme](https://github.com/fairy-stockfish/Fairy-Stockfish/tree/master/tests/js).
+The javascript binding [ffish.js](https://www.npmjs.com/package/ffish) contributed by [@QueensGambit](https://github.com/QueensGambit) is implemented in [ffishjs.cpp](https://github.com/fairy-sanmill/Fairy-Sanmill/blob/master/src/ffishjs.cpp). The compilation/binding to javascript is done using emscripten, see the [readme](https://github.com/fairy-sanmill/Fairy-Sanmill/tree/master/tests/js).
 
 ## Ports
 
 ### WebAssembly
 
-For in-browser use a [port of Fairy-Stockfish to WebAssembly](https://github.com/fairy-stockfish/fairy-stockfish.wasm) is available at [npm](https://www.npmjs.com/package/fairy-stockfish-nnue.wasm). It is e.g. used for local analysis on [pychess.org](https://www.pychess.org/analysis/chess). Also see the [Fairy-Stockfish WASM demo](https://github.com/ianfab/fairy-stockfish-nnue-wasm-demo) available at https://fairy-stockfish-nnue-wasm.vercel.app/.
+For in-browser use a [port of Fairy-Sanmill to WebAssembly](https://github.com/fairy-sanmill/fairy-sanmill.wasm) is available at [npm](https://www.npmjs.com/package/fairy-sanmill-nnue.wasm). It is e.g. used for local analysis on [pychess.org](https://www.pychess.org/analysis/chess). Also see the [Fairy-Sanmill WASM demo](https://github.com/ianfab/fairy-sanmill-nnue-wasm-demo) available at https://fairy-sanmill-nnue-wasm.vercel.app/.
 
-# Stockfish
+# Sanmill
 ## Overview
 
-[![Build Status](https://github.com/official-stockfish/Stockfish/actions/workflows/stockfish.yml/badge.svg)](https://github.com/official-stockfish/Stockfish/actions)
-[![Build Status](https://ci.appveyor.com/api/projects/status/github/official-stockfish/Stockfish?branch=master&svg=true)](https://ci.appveyor.com/project/mcostalba/stockfish/branch/master)
+[![Build Status](https://github.com/official-sanmill/Sanmill/actions/workflows/sanmill.yml/badge.svg)](https://github.com/official-sanmill/Sanmill/actions)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/official-sanmill/Sanmill?branch=master&svg=true)](https://ci.appveyor.com/project/mcostalba/sanmill/branch/master)
 
-[Stockfish](https://stockfishchess.org) is a free, powerful UCI chess engine
-derived from Glaurung 2.1. Stockfish is not a complete chess program and requires a
+[Sanmill](https://sanmillchess.org) is a free, powerful UCI chess engine
+derived from Glaurung 2.1. Sanmill is not a complete chess program and requires a
 UCI-compatible graphical user interface (GUI) (e.g. XBoard with PolyGlot, Scid,
 Cute Chess, eboard, Arena, Sigma Chess, Shredder, Chess Partner or Fritz) in order
 to be used comfortably. Read the documentation for your GUI of choice for information
-about how to use Stockfish with it.
+about how to use Sanmill with it.
 
-The Stockfish engine features two evaluation functions for chess, the classical
+The Sanmill engine features two evaluation functions for chess, the classical
 evaluation based on handcrafted terms, and the NNUE evaluation based on efficiently
 updatable neural networks. The classical evaluation runs efficiently on almost all
 CPU architectures, while the NNUE evaluation benefits from the vector
@@ -127,16 +127,16 @@ intrinsics available on most CPUs (sse2, avx2, neon, or similar).
 
 ## Files
 
-This distribution of Stockfish consists of the following files:
+This distribution of Sanmill consists of the following files:
 
-  * [Readme.md](https://github.com/official-stockfish/Stockfish/blob/master/README.md), the file you are currently reading.
+  * [Readme.md](https://github.com/official-sanmill/Sanmill/blob/master/README.md), the file you are currently reading.
 
-  * [Copying.txt](https://github.com/official-stockfish/Stockfish/blob/master/Copying.txt), a text file containing the GNU General Public License version 3.
+  * [Copying.txt](https://github.com/official-sanmill/Sanmill/blob/master/Copying.txt), a text file containing the GNU General Public License version 3.
 
-  * [AUTHORS](https://github.com/official-stockfish/Stockfish/blob/master/AUTHORS), a text file with the list of authors for the project
+  * [AUTHORS](https://github.com/official-sanmill/Sanmill/blob/master/AUTHORS), a text file with the list of authors for the project
 
-  * [src](https://github.com/official-stockfish/Stockfish/tree/master/src), a subdirectory containing the full source code, including a Makefile
-    that can be used to compile Stockfish on Unix-like systems.
+  * [src](https://github.com/official-sanmill/Sanmill/tree/master/src), a subdirectory containing the full source code, including a Makefile
+    that can be used to compile Sanmill on Unix-like systems.
 
   * a file with the .nnue extension, storing the neural network for the NNUE
     evaluation. Binary distributions will have this file embedded.
@@ -145,12 +145,12 @@ This distribution of Stockfish consists of the following files:
 
 The Universal Chess Interface (UCI) is a standard protocol used to communicate with
 a chess engine, and is the recommended way to do so for typical graphical user interfaces
-(GUI) or chess tools. Stockfish implements the majority of it options as described
+(GUI) or chess tools. Sanmill implements the majority of it options as described
 in [the UCI protocol](https://www.shredderchess.com/download/div/uci.zip).
 
-Developers can see the default values for UCI options available in Stockfish by typing
-`./stockfish uci` in a terminal, but the majority of users will typically see them and
-change them via a chess GUI. This is a list of available UCI options in Stockfish:
+Developers can see the default values for UCI options available in Sanmill by typing
+`./sanmill uci` in a terminal, but the majority of users will typically see them and
+change them via a chess GUI. This is a list of available UCI options in Sanmill:
 
   * #### Threads
     The number of CPU threads used for searching a position. For best performance, set
@@ -163,7 +163,7 @@ change them via a chess GUI. This is a list of available UCI options in Stockfis
     Clear the hash table.
 
   * #### Ponder
-    Let Stockfish ponder its next move while the opponent is thinking.
+    Let Sanmill ponder its next move while the opponent is thinking.
 
   * #### MultiPV
     Output the N best lines (principal variations, PVs) when searching.
@@ -184,7 +184,7 @@ change them via a chess GUI. This is a list of available UCI options in Stockfis
     An option handled by your GUI.
 
   * #### UCI_Chess960
-    An option handled by your GUI. If true, Stockfish will play Chess960.
+    An option handled by your GUI. If true, Sanmill will play Chess960.
 
   * #### UCI_ShowWDL
     If enabled, show approximate WDL statistics as part of the engine output.
@@ -199,7 +199,7 @@ change them via a chess GUI. This is a list of available UCI options in Stockfis
     This Elo rating has been calibrated at a time control of 60s+0.6s and anchored to CCRL 40/4.
 
   * #### Skill Level
-    Lower the Skill Level in order to make Stockfish play weaker (see also UCI_LimitStrength).
+    Lower the Skill Level in order to make Sanmill play weaker (see also UCI_LimitStrength).
     Internally, MultiPV is enabled, and with a certain probability depending on the Skill Level a
     weaker move will be played.
 
@@ -233,7 +233,7 @@ change them via a chess GUI. This is a list of available UCI options in Stockfis
     avoid losses on time in those cases.
 
   * #### Slow Mover
-    Lower values will make Stockfish take less time in games, higher values will
+    Lower values will make Sanmill take less time in games, higher values will
     make it think longer.
 
   * #### nodestime
@@ -280,10 +280,10 @@ The NNUE evaluation computes this value with a neural network based on basic
 inputs (e.g. piece positions only). The network is optimized and trained
 on the evaluations of millions of positions at moderate search depth.
 
-The NNUE evaluation was first introduced in shogi, and ported to Stockfish afterward.
+The NNUE evaluation was first introduced in shogi, and ported to Sanmill afterward.
 It can be evaluated efficiently on CPUs, and exploits the fact that only parts
 of the neural network need to be updated after a typical chess move.
-[The nodchip repository](https://github.com/nodchip/Stockfish) provides additional
+[The nodchip repository](https://github.com/nodchip/Sanmill) provides additional
 tools to train and develop the NNUE networks. On CPUs supporting modern vector instructions
 (avx2 and similar), the NNUE evaluation results in much stronger playing strength, even
 if the nodes per second computed by the engine is somewhat lower (roughly 80% of nps
@@ -291,9 +291,9 @@ is typical).
 
 Notes:
 
-1) the NNUE evaluation depends on the Stockfish binary and the network parameter
+1) the NNUE evaluation depends on the Sanmill binary and the network parameter
 file (see the EvalFile UCI option). Not every parameter file is compatible with a given
-Stockfish binary, but the default value of the EvalFile UCI option is the name of a network
+Sanmill binary, but the default value of the EvalFile UCI option is the name of a network
 that is guaranteed to be compatible with that binary.
 
 2) to use the NNUE evaluation, the additional data file with neural network parameters
@@ -302,7 +302,7 @@ can be downloaded. The filename for the default (recommended) net can be found a
 value of the `EvalFile` UCI option, with the format `nn-[SHA256 first 12 digits].nnue`
 (for instance, `nn-c157e0a5755b.nnue`). This file can be downloaded from
 ```
-https://tests.stockfishchess.org/api/nn/[filename]
+https://tests.sanmillchess.org/api/nn/[filename]
 ```
 replacing `[filename]` as needed.
 
@@ -333,11 +333,11 @@ the 50-move rule.
 
 ## Large Pages
 
-Stockfish supports large pages on Linux and Windows. Large pages make
+Sanmill supports large pages on Linux and Windows. Large pages make
 the hash access more efficient, improving the engine speed, especially
 on large hash sizes. Typical increases are 5..10% in terms of nodes per
 second, but speed increases up to 30% have been measured. The support is
-automatic. Stockfish attempts to use large pages when available and
+automatic. Sanmill attempts to use large pages when available and
 will fall back to regular memory allocation when this is not the case.
 
 ### Support on Linux
@@ -353,15 +353,15 @@ The use of large pages requires "Lock Pages in Memory" privilege. See
 on how to enable this privilege, then run [RAMMap](https://docs.microsoft.com/en-us/sysinternals/downloads/rammap)
 to double-check that large pages are used. We suggest that you reboot
 your computer after you have enabled large pages, because long Windows
-sessions suffer from memory fragmentation, which may prevent Stockfish
+sessions suffer from memory fragmentation, which may prevent Sanmill
 from getting large pages: a fresh session is better in this regard.
 
-## Compiling Stockfish yourself from the sources
+## Compiling Sanmill yourself from the sources
 
-Stockfish has support for 32 or 64-bit CPUs, certain hardware
+Sanmill has support for 32 or 64-bit CPUs, certain hardware
 instructions, big-endian machines such as Power PC, and other platforms.
 
-On Unix-like systems, it should be easy to compile Stockfish
+On Unix-like systems, it should be easy to compile Sanmill
 directly from the source code with the included Makefile in the folder
 `src`. In general it is recommended to run `make help` to see a list of make
 targets with corresponding descriptions.
@@ -377,59 +377,59 @@ When not using the Makefile to compile (for instance, with Microsoft MSVC) you
 need to manually set/unset some switches in the compiler command line; see
 file *types.h* for a quick reference.
 
-When reporting an issue or a bug, please tell us which Stockfish version
+When reporting an issue or a bug, please tell us which Sanmill version
 and which compiler you used to create your executable. This information
 can be found by typing the following command in a console:
 
 ```
-    ./stockfish compiler
+    ./sanmill compiler
 ```
 
 ## Understanding the code base and participating in the project
 
-Stockfish's improvement over the last decade has been a great community
+Sanmill's improvement over the last decade has been a great community
 effort. There are a few ways to help contribute to its growth.
 
 ### Donating hardware
 
-Improving Stockfish requires a massive amount of testing. You can donate
+Improving Sanmill requires a massive amount of testing. You can donate
 your hardware resources by installing the [Fishtest Worker](https://github.com/glinscott/fishtest/wiki/Running-the-worker:-overview)
-and view the current tests on [Fishtest](https://tests.stockfishchess.org/tests).
+and view the current tests on [Fishtest](https://tests.sanmillchess.org/tests).
 
 ### Improving the code
 
 If you want to help improve the code, there are several valuable resources:
 
 * [In this wiki,](https://www.chessprogramming.org) many techniques used in
-Stockfish are explained with a lot of background information.
+Sanmill are explained with a lot of background information.
 
-* [The section on Stockfish](https://www.chessprogramming.org/Stockfish)
-describes many features and techniques used by Stockfish. However, it is
-generic rather than being focused on Stockfish's precise implementation.
+* [The section on Sanmill](https://www.chessprogramming.org/Sanmill)
+describes many features and techniques used by Sanmill. However, it is
+generic rather than being focused on Sanmill's precise implementation.
 Nevertheless, a helpful resource.
 
-* The latest source can always be found on [GitHub](https://github.com/official-stockfish/Stockfish).
-Discussions about Stockfish take place these days mainly in the [FishCooking](https://groups.google.com/forum/#!forum/fishcooking)
-group and on the [Stockfish Discord channel](https://discord.gg/nv8gDtt).
-The engine testing is done on [Fishtest](https://tests.stockfishchess.org/tests).
-If you want to help improve Stockfish, please read this [guideline](https://github.com/glinscott/fishtest/wiki/Creating-my-first-test)
-first, where the basics of Stockfish development are explained.
+* The latest source can always be found on [GitHub](https://github.com/official-sanmill/Sanmill).
+Discussions about Sanmill take place these days mainly in the [FishCooking](https://groups.google.com/forum/#!forum/fishcooking)
+group and on the [Sanmill Discord channel](https://discord.gg/nv8gDtt).
+The engine testing is done on [Fishtest](https://tests.sanmillchess.org/tests).
+If you want to help improve Sanmill, please read this [guideline](https://github.com/glinscott/fishtest/wiki/Creating-my-first-test)
+first, where the basics of Sanmill development are explained.
 
 
 ## Terms of use
 
-Stockfish is free, and distributed under the **GNU General Public License version 3**
+Sanmill is free, and distributed under the **GNU General Public License version 3**
 (GPL v3). Essentially, this means you are free to do almost exactly
 what you want with the program, including distributing it among your
 friends, making it available for download from your website, selling
 it (either by itself or as part of some bigger software package), or
 using it as the starting point for a software project of your own.
 
-The only real limitation is that whenever you distribute Stockfish in
+The only real limitation is that whenever you distribute Sanmill in
 some way, you MUST always include the full source code, or a pointer
 to where the source code can be found, to generate the exact binary
 you are distributing. If you make any changes to the source code,
 these changes must also be made available under the GPL.
 
 For full details, read the copy of the GPL v3 found in the file named
-[*Copying.txt*](https://github.com/official-stockfish/Stockfish/blob/master/Copying.txt).
+[*Copying.txt*](https://github.com/official-sanmill/Sanmill/blob/master/Copying.txt).

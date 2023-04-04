@@ -39,16 +39,16 @@ case $1 in
     threads="2"
 
 cat << EOF > tsan.supp
-race:Stockfish::TTEntry::move
-race:Stockfish::TTEntry::depth
-race:Stockfish::TTEntry::bound
-race:Stockfish::TTEntry::save
-race:Stockfish::TTEntry::value
-race:Stockfish::TTEntry::eval
-race:Stockfish::TTEntry::is_pv
+race:Sanmill::TTEntry::move
+race:Sanmill::TTEntry::depth
+race:Sanmill::TTEntry::bound
+race:Sanmill::TTEntry::save
+race:Sanmill::TTEntry::value
+race:Sanmill::TTEntry::eval
+race:Sanmill::TTEntry::is_pv
 
-race:Stockfish::TranspositionTable::probe
-race:Stockfish::TranspositionTable::hashfull
+race:Sanmill::TranspositionTable::probe
+race:Sanmill::TranspositionTable::hashfull
 
 EOF
 
@@ -73,15 +73,15 @@ for args in "eval" \
             "bench 128 $threads 8 default depth"
 do
 
-   echo "$prefix $exeprefix ./stockfish $args $postfix"
-   eval "$prefix $exeprefix ./stockfish $args $postfix"
+   echo "$prefix $exeprefix ./sanmill $args $postfix"
+   eval "$prefix $exeprefix ./sanmill $args $postfix"
 
 done
 
 # more general testing, following an uci protocol exchange
 cat << EOF > game.exp
  set timeout 240
- spawn $exeprefix ./stockfish
+ spawn $exeprefix ./sanmill
 
  send "uci\n"
  expect "uciok"
@@ -117,7 +117,7 @@ fi
 
 cat << EOF > syzygy.exp
  set timeout 600
- spawn $exeprefix ./stockfish
+ spawn $exeprefix ./sanmill
  send "uci\n"
  send "setoption name SyzygyPath value ../tests/syzygy/\n"
  expect "info string Found 35 tablebases" {} timeout {exit 1}

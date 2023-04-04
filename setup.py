@@ -40,14 +40,14 @@ pyffish_module = Extension(
     extra_compile_args=args)
 
 setup(name="pyffish", version="0.0.78",
-      description="Fairy-Stockfish Python wrapper",
+      description="Fairy-Sanmill Python wrapper",
       long_description=long_description,
       long_description_content_type="text/markdown",
       author="Bajusz Tamás",
       author_email="gbtami@gmail.com",
       license="GPL3",
       classifiers=CLASSIFIERS,
-      url="https://github.com/gbtami/Fairy-Stockfish",
+      url="https://github.com/gbtami/Fairy-Sanmill",
       python_requires=">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*",
       ext_modules=[pyffish_module]
       )

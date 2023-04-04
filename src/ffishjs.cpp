@@ -1,5 +1,5 @@
 /*
-  ffish.js, a JavaScript chess variant library derived from Fairy-Stockfish
+  ffish.js, a JavaScript chess variant library derived from Fairy-Sanmill
   Copyright (C) 2022 Fabian Fichter, Johannes Czech
 
   ffish.js is free software: you can redistribute it and/or modify
@@ -40,9 +40,9 @@
 
 using namespace emscripten;
 
-using namespace Stockfish;
+using namespace Sanmill;
 
-void initialize_stockfish() {
+void initialize_sanmill() {
   pieceMap.init();
   variants.init();
   UCI::init(Options);
@@ -272,11 +272,11 @@ public:
   }
 
   bool has_insufficient_material(bool turn) const {
-    return Stockfish::has_insufficient_material(turn ? WHITE : BLACK, pos);
+    return Sanmill::has_insufficient_material(turn ? WHITE : BLACK, pos);
   }
 
   bool is_insufficient_material() const {
-    return Stockfish::has_insufficient_material(WHITE, pos) && Stockfish::has_insufficient_material(BLACK, pos);
+    return Sanmill::has_insufficient_material(WHITE, pos) && Sanmill::has_insufficient_material(BLACK, pos);
   }
 
   bool is_game_over() const {
@@ -329,7 +329,7 @@ public:
   }
 
   std::string checked_pieces() const {
-    Bitboard checked = Stockfish::checked(pos);
+    Bitboard checked = Sanmill::checked(pos);
     std::string squares;
     while (checked) {
       Square sr = pop_lsb(checked);
@@ -341,7 +341,7 @@ public:
   }
 
   bool is_check() const {
-    return Stockfish::checked(pos);
+    return Sanmill::checked(pos);
   }
 
   bool is_bikjang() const {
@@ -443,7 +443,7 @@ private:
 
   void init(std::string uciVariant, std::string fen, bool is960) {
     if (!Board::sfInitialized) {
-      initialize_stockfish();
+      initialize_sanmill();
       Board::sfInitialized = true;
     }
     v = get_variant(uciVariant);
@@ -459,7 +459,7 @@ private:
 bool Board::sfInitialized = false;
 
 namespace ffish {
-  // returns the version of the Fairy-Stockfish binary
+  // returns the version of the Fairy-Sanmill binary
   std::string info() {
     return engine_info();
   }
@@ -483,7 +483,7 @@ namespace ffish {
   void load_variant_config(std::string variantInitContent) {
     std::stringstream ss(variantInitContent);
     if (!Board::sfInitialized)
-      initialize_stockfish();
+      initialize_sanmill();
     variants.parse_istream<false>(ss);
     Options["UCI_Variant"].set_combo(variants.get_keys());
     Board::sfInitialized = true;

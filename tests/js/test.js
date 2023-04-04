@@ -755,7 +755,7 @@ describe('board.variant()', function () {
 });
 
 describe('ffish.info()', function () {
-  it("it returns the version of the Fairy-Stockfish binary", () => {
+  it("it returns the version of the Fairy-Sanmill binary", () => {
     chai.expect(ffish.info()).to.be.a('string');
   });
 });
@@ -916,7 +916,7 @@ describe('game.headers(key)', function () {
        }
        let game = ffish.readGamePGN(data);
        chai.expect(game.headers("White")).to.equal("catask");
-       chai.expect(game.headers("Black")).to.equal("Fairy-Stockfish");
+       chai.expect(game.headers("Black")).to.equal("Fairy-Sanmill");
        chai.expect(game.headers("Variant")).to.equal("Seirawan");
        chai.expect(game.headers("FEN")).to.equal("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[HEhe] w KQBCDFGkqbcdfg - 0 1");
 

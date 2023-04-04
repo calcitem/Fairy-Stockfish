@@ -1,13 +1,13 @@
 /*
-  Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+  Sanmill, a UCI chess playing engine derived from Glaurung 2.1
+  Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
 
-  Stockfish is free software: you can redistribute it and/or modify
+  Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Stockfish is distributed in the hope that it will be useful,
+  Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -57,7 +57,7 @@
 
 using namespace std;
 
-namespace Stockfish {
+namespace Sanmill {
 
 const Variant* currentNnueVariant;
 
@@ -150,7 +150,7 @@ namespace Eval {
         string msg1 = "If the UCI option \"Use NNUE\" is set to true, network evaluation parameters compatible with the engine must be available.";
         string msg2 = "The option is set to true, but the network file " + eval_file + " was not loaded successfully.";
         string msg3 = "The UCI option EvalFile might need to specify the full path, including the directory name, to the network file.";
-        string msg4 = "The default net can be downloaded from: https://tests.stockfishchess.org/api/nn/" + string(defaults["EvalFile"]);
+        string msg4 = "The default net can be downloaded from: https://tests.sanmillchess.org/api/nn/" + string(defaults["EvalFile"]);
         string msg5 = "The engine will be terminated now.";
 
         sync_cout << "info string ERROR: " << msg1 << sync_endl;
@@ -1714,4 +1714,4 @@ std::string Eval::trace(Position& pos) {
   return ss.str();
 }
 
-} // namespace Stockfish
+} // namespace Sanmill

@@ -1,12 +1,12 @@
-# Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-# Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+# Sanmill, a UCI chess playing engine derived from Glaurung 2.1
+# Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
 #
-# Stockfish is free software: you can redistribute it and/or modify
+# Sanmill is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# Stockfish is distributed in the hope that it will be useful,
+# Sanmill is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -21,9 +21,9 @@
 
 ### Executable name
 ifeq ($(COMP),mingw)
-EXE = stockfish.exe
+EXE = sanmill.exe
 else
-EXE = stockfish
+EXE = sanmill
 endif
 
 ### Installation dir definitions
@@ -701,7 +701,7 @@ endif
 
 help:
 	@echo ""
-	@echo "To compile stockfish, type: "
+	@echo "To compile sanmill, type: "
 	@echo ""
 	@echo "make target ARCH=arch [COMP=compiler] [COMPCXX=cxx]"
 	@echo ""
@@ -821,7 +821,7 @@ clean: objclean profileclean
 net:
 	$(eval nnuenet := $(shell grep EvalFileDefaultName evaluate.h | grep define | sed 's/.*\(nn-[a-z0-9]\{12\}.nnue\).*/\1/'))
 	@echo "Default net: $(nnuenet)"
-	$(eval nnuedownloadurl := https://tests.stockfishchess.org/api/nn/$(nnuenet))
+	$(eval nnuedownloadurl := https://tests.sanmillchess.org/api/nn/$(nnuenet))
 	$(eval curl_or_wget := $(shell if hash curl 2>/dev/null; then echo "curl -skL"; elif hash wget 2>/dev/null; then echo "wget -qO-"; fi))
 	@if test -f "$(nnuenet)"; then \
             echo "Already available."; \
@@ -849,9 +849,9 @@ objclean:
 profileclean:
 	@rm -rf profdir
 	@rm -f bench.txt *.gcda *.gcno ./syzygy/*.gcda ./nnue/*.gcda ./nnue/features/*.gcda *.s
-	@rm -f stockfish.profdata *.profraw
-	@rm -f stockfish.exe.lto_wrapper_args
-	@rm -f stockfish.exe.ltrans.out
+	@rm -f sanmill.profdata *.profraw
+	@rm -f sanmill.exe.lto_wrapper_args
+	@rm -f sanmill.exe.ltrans.out
 	@rm -f ./-lstdc++.res
 
 default:
@@ -887,7 +887,7 @@ config-sanity: $(load_net)
 	@echo "vnni512: '$(vnni512)'"
 	@echo "neon: '$(neon)'"
 	@echo ""
-	@echo "Fairy-Stockfish specific:"
+	@echo "Fairy-Sanmill specific:"
 	@echo "largeboards: '$(largeboards)'"
 	@echo "all: '$(all)'"
 	@echo "precomputedmagics: '$(precomputedmagics)'"
@@ -933,9 +933,9 @@ clang-profile-make:
 	all
 
 clang-profile-use:
-	$(XCRUN) llvm-profdata merge -output=stockfish.profdata *.profraw
+	$(XCRUN) llvm-profdata merge -output=sanmill.profdata *.profraw
 	$(MAKE) ARCH=$(ARCH) COMP=$(COMP) \
-	EXTRACXXFLAGS='-fprofile-instr-use=stockfish.profdata' \
+	EXTRACXXFLAGS='-fprofile-instr-use=sanmill.profdata' \
 	EXTRALDFLAGS='-fprofile-use ' \
 	all
 

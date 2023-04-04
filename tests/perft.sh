@@ -14,7 +14,7 @@ cat << EOF > perft.exp
    set timeout 60
    lassign \$argv var pos depth result chess960
    if {\$chess960 eq ""} {set chess960 false}
-   spawn ./stockfish
+   spawn ./sanmill
    send "setoption name UCI_Chess960 value \$chess960\\n"
    send "setoption name UCI_Variant value \$var\\n"
    send "position \$pos\\ngo perft \$depth\\n"

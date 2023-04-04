@@ -247,7 +247,7 @@ class TestPyffish(unittest.TestCase):
 
     def test_info(self):
         result = sf.info()
-        self.assertTrue(result.startswith("Fairy-Stockfish"))
+        self.assertTrue(result.startswith("Fairy-Sanmill"))
 
     def test_variants_loaded(self):
         variants = sf.variants()

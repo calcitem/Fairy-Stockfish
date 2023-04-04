@@ -1,4 +1,4 @@
-export declare function Module(opts?: ModuleOptions): Promise<FairyStockfish>;
+export declare function Module(opts?: ModuleOptions): Promise<FairySanmill>;
 export default Module;
 
 export interface ModuleOptions {
@@ -9,7 +9,7 @@ export interface ModuleOptions {
     logReadFiles?: boolean;
     printWithColors?: boolean;
     onAbort?: (status: string | number) => void;
-    onRuntimeInitialized?: (loadedModule: FairyStockfish) => void;
+    onRuntimeInitialized?: (loadedModule: FairySanmill) => void;
     noExitRuntime?: boolean;
     noInitialRun?: boolean;
     preInit?: () => void | (() => void)[];
@@ -19,7 +19,7 @@ export interface ModuleOptions {
     mainScriptUrlOrBlob?: string;
 }
 
-export interface FairyStockfish {
+export interface FairySanmill {
     Board: Board;
     Game: Game;
     Notation: typeof Notation;

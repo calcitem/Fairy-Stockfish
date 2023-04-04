@@ -13,7 +13,7 @@
 </p>
 
 
-The package **ffish.js** is a high performance WebAssembly chess variant library based on [_Fairy-Stockfish_](https://github.com/ianfab/Fairy-Stockfish).
+The package **ffish.js** is a high performance WebAssembly chess variant library based on [_Fairy-Sanmill_](https://github.com/ianfab/Fairy-Sanmill).
 
 It is available as a [standard module](https://www.npmjs.com/package/ffish), as an [ES6 module](https://www.npmjs.com/package/ffish-es6) and aims to have a syntax similar to [python-chess](https://python-chess.readthedocs.io/en/latest/index.html).
 
@@ -55,7 +55,7 @@ new Module().then(loadedModule => {
 
 ### Available variants
 
-Show all available variants supported by _Fairy-Stockfish_ and **ffish.js**.
+Show all available variants supported by _Fairy-Sanmill_ and **ffish.js**.
 
 ```javascript
 ffish.variants()
@@ -209,9 +209,9 @@ fs.readFile(pgnFilePath, 'utf8', function (err,data) {
 
 ## Custom variants
 
-Fairy-Stockfish also allows defining custom variants by loading a configuration file.
+Fairy-Sanmill also allows defining custom variants by loading a configuration file.
 
-See e.g. the configuration for **connect4**, **tictactoe** or **janggihouse** in [variants.ini](https://github.com/ianfab/Fairy-Stockfish/blob/master/src/variants.ini).
+See e.g. the configuration for **connect4**, **tictactoe** or **janggihouse** in [variants.ini](https://github.com/ianfab/Fairy-Sanmill/blob/master/src/variants.ini).
 ```javascript
 fs = require('fs');
 let configFilePath = './variants.ini';
@@ -227,7 +227,7 @@ let configFilePath = './variants.ini';
 
 ## Remaining features
 
-For an example of each available function see [test.js](https://github.com/ianfab/Fairy-Stockfish/blob/master/tests/js/test.js).
+For an example of each available function see [test.js](https://github.com/ianfab/Fairy-Sanmill/blob/master/tests/js/test.js).
 
 ## Build instuctions
 

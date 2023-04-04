@@ -1,13 +1,13 @@
 /*
-  Fairy-Stockfish, a UCI chess variant playing engine derived from Stockfish
+  Fairy-Sanmill, a UCI chess variant playing engine derived from Sanmill
   Copyright (C) 2018-2022 Fabian Fichter
 
-  Fairy-Stockfish is free software: you can redistribute it and/or modify
+  Fairy-Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Fairy-Stockfish is distributed in the hope that it will be useful,
+  Fairy-Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -24,7 +24,7 @@
 #include "thread.h"
 #include "uci.h"
 
-namespace Stockfish {
+namespace Sanmill {
 
 PartnerHandler Partner; // Global object
 
@@ -42,8 +42,8 @@ void PartnerHandler::ptell(const std::string& message) {
 void PartnerHandler::parse_partner(std::istringstream& is) {
     std::string token;
     if (is >> token)
-        // handshake to identify Fairy-Stockfish
-        ptell("partner Fairy-Stockfish is an engine. Ask it 'help' for supported commands.");
+        // handshake to identify Fairy-Sanmill
+        ptell("partner Fairy-Sanmill is an engine. Ask it 'help' for supported commands.");
     else
         isFairy = false;
 }
@@ -53,8 +53,8 @@ void PartnerHandler::parse_ptell(std::istringstream& is, const Position& pos) {
     is >> token;
     if (token == "partner")
     {
-        // handshake to identify Fairy-Stockfish
-        if (is >> token && token == "Fairy-Stockfish")
+        // handshake to identify Fairy-Sanmill
+        if (is >> token && token == "Fairy-Sanmill")
             isFairy = true;
     }
     else if (token == "help")
@@ -155,4 +155,4 @@ template void PartnerHandler::ptell<HUMAN>(const std::string&);
 template void PartnerHandler::ptell<FAIRY>(const std::string&);
 template void PartnerHandler::ptell<ALL_PARTNERS>(const std::string&);
 
-} // namespace Stockfish
+} // namespace Sanmill

@@ -11,7 +11,7 @@ trap 'error ${LINENO}' ERR
 echo "protocol testing started"
 
 cat << EOF > uci.exp
-   spawn ./stockfish
+   spawn ./sanmill
    send "uci\\n"
    expect "default chess"
    expect "uciok"
@@ -20,7 +20,7 @@ cat << EOF > uci.exp
 EOF
 
 cat << EOF > ucci.exp
-   spawn ./stockfish
+   spawn ./sanmill
    send "ucci\\n"
    expect "option UCI_Variant"
    expect "default xiangqi"
@@ -30,7 +30,7 @@ cat << EOF > ucci.exp
 EOF
 
 cat << EOF > usi.exp
-   spawn ./stockfish
+   spawn ./sanmill
    send "usi\\n"
    expect "default shogi"
    expect "usiok"
@@ -39,7 +39,7 @@ cat << EOF > usi.exp
 EOF
 
 cat << EOF > ucicyclone.exp
-   spawn ./stockfish
+   spawn ./sanmill
    send "uci\\n"
    expect "uciok"
    send "startpos\\n"
@@ -50,7 +50,7 @@ cat << EOF > ucicyclone.exp
 EOF
 
 cat << EOF > ucicyclone2.exp
-   spawn ./stockfish ucicyclone
+   spawn ./sanmill ucicyclone
    send "uci\\n"
    expect "uciok"
    send "position startpos\\n"
@@ -61,7 +61,7 @@ cat << EOF > ucicyclone2.exp
 EOF
 
 cat << EOF > xboard.exp
-   spawn ./stockfish load variants.ini
+   spawn ./sanmill load variants.ini
    send "xboard\\n"
    send "protover 2\\n"
    expect "feature done=1"

@@ -1,13 +1,13 @@
 /*
-  Stockfish, a UCI chess playing engine derived from Glaurung 2.1
-  Copyright (C) 2004-2022 The Stockfish developers (see AUTHORS file)
+  Sanmill, a UCI chess playing engine derived from Glaurung 2.1
+  Copyright (C) 2004-2022 The Sanmill developers (see AUTHORS file)
 
-  Stockfish is free software: you can redistribute it and/or modify
+  Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Stockfish is distributed in the hope that it will be useful,
+  Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -61,7 +61,7 @@ typedef bool(*fun3_t)(HANDLE, CONST GROUP_AFFINITY*, PGROUP_AFFINITY);
 
 using namespace std;
 
-namespace Stockfish {
+namespace Sanmill {
 
 namespace {
 
@@ -135,9 +135,9 @@ public:
 } // namespace
 
 
-/// engine_info() returns the full name of the current Stockfish version. This
-/// will be either "Stockfish <Tag> DD-MM-YY" (where DD-MM-YY is the date when
-/// the program was compiled) or "Stockfish <Version>", depending on whether
+/// engine_info() returns the full name of the current Sanmill version. This
+/// will be either "Sanmill <Tag> DD-MM-YY" (where DD-MM-YY is the date when
+/// the program was compiled) or "Sanmill <Version>", depending on whether
 /// Version is empty.
 
 string engine_info(bool to_uci, bool to_xboard) {
@@ -146,7 +146,7 @@ string engine_info(bool to_uci, bool to_xboard) {
   string month, day, year;
   stringstream ss, date(__DATE__); // From compiler, format is "Sep 21 2008"
 
-  ss << "Fairy-Stockfish " << Version << setfill('0');
+  ss << "Fairy-Sanmill " << Version << setfill('0');
 
   if (Version.empty())
   {
@@ -653,4 +653,4 @@ void init(int argc, char* argv[]) {
 
 } // namespace CommandLine
 
-} // namespace Stockfish
+} // namespace Sanmill

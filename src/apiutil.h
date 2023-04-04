@@ -1,13 +1,13 @@
 /*
-  Fairy-Stockfish, a UCI chess variant playing engine derived from Stockfish
+  Fairy-Sanmill, a UCI chess variant playing engine derived from Sanmill
   Copyright (C) 2018-2022 Fabian Fichter
 
-  Fairy-Stockfish is free software: you can redistribute it and/or modify
+  Fairy-Sanmill is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
 
-  Fairy-Stockfish is distributed in the hope that it will be useful,
+  Fairy-Sanmill is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
@@ -31,7 +31,7 @@
 #include "position.h"
 #include "variant.h"
 
-namespace Stockfish {
+namespace Sanmill {
 
 enum Notation {
     NOTATION_DEFAULT,
@@ -1076,6 +1076,6 @@ inline FenValidation validate_fen(const std::string& fen, const Variant* v, bool
 }
 } // namespace FEN
 
-} // namespace Stockfish
+} // namespace Sanmill
 
 #endif // #ifndef APIUTIL_H_INCLUDED
