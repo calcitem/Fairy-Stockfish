@@ -49,11 +49,14 @@ enum Notation {
     // https://web.archive.org/web/20180817205956/http://bgsthai.com/2018/05/07/lawofthaichessc/
     NOTATION_THAI_SAN,
     NOTATION_THAI_LAN,
+    NOTATION_MILL, // Added for Mill (N Men's Morris)
 };
 
 inline Notation default_notation(const Variant* v) {
     if (v->variantTemplate == "shogi")
         return NOTATION_SHOGI_HODGES_NUMBER;
+    else if (v->variantTemplate == "mill")
+        return NOTATION_MILL; // Return Mill notation for Mill variant
     return NOTATION_SAN;
 }
 
@@ -81,6 +84,11 @@ enum Disambiguation {
 
 inline bool is_shogi(Notation n) {
     return n == NOTATION_SHOGI_HOSKING || n == NOTATION_SHOGI_HODGES || n == NOTATION_SHOGI_HODGES_NUMBER;
+}
+
+// Added function to check if the notation is for Mill (N Men's Morris)
+inline bool is_mill(Notation n) {
+    return n == NOTATION_MILL;
 }
 
 inline bool is_thai(Notation n) {
