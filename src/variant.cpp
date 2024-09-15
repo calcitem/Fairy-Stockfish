@@ -1226,6 +1226,54 @@ namespace {
         v->flyingGeneral = true;
         return v;
     }
+    // Mill (N Men's Morris) Variant
+    // https://en.wikipedia.org/wiki/Nine_men%27s_morris
+    Variant* mill_variant() {
+        Variant* v = chess_variant_base()->init();
+
+        // 设置棋盘大小为7x7
+        v->maxRank = RANK_7;
+        v->maxFile = FILE_G;
+
+        // 定义棋子类型表，'W' 代表白方，'B' 代表黑方，'k' 代表国王（用于和棋判断）
+        v->pieceToCharTable = "W.B............w.b............k";
+
+        // 添加自定义棋子
+        // 'W' 和 'B' 的移动方式设为类似国王（一步移动到任何相邻点）
+        v->add_piece(CUSTOM_PIECE_1, 'W', "K"); // 白方棋子
+        v->add_piece(CUSTOM_PIECE_2, 'B', "K"); // 黑方棋子
+
+        // 设置起始位置为空棋盘，所有棋子通过放置（drop）机制进入棋盘
+        v->startFen = "7/7/7/7/7/7/7 w - - 0 1";
+
+        // 启用棋子放置机制
+        v->pieceDrops = true;
+
+        // 禁止将被捕获的棋子放入手中
+        v->capturesToHand = false;
+
+        // 强制捕获规则（在 Mill 中，当形成三连时必须移除对方一个棋子）
+        v->mustCapture = true;
+
+        // 定义消灭规则，当三个相同颜色的棋子连成一线时触发
+        v->extinctionPieceTypes = piece_set(CUSTOM_PIECE_1) | piece_set(CUSTOM_PIECE_2);
+        v->extinctionPieceCount = 3;
+        v->extinctionValue = -MillPieceValueMg; // TODO: 形成三连时
+
+        // 禁用易位和升变
+        v->castling = false;
+        v->promotionPieceTypes[WHITE] = NO_PIECE_SET;
+        v->promotionPieceTypes[BLACK] = NO_PIECE_SET;
+
+        // 设置移动和重复规则
+        v->nMoveRule = 0;
+        v->nFoldRule = 0;
+
+        // 设置和棋条件（形成三连时视为输）
+        v->stalemateValue =  -VALUE_MATE;
+
+        return v;
+    }
 #ifdef LARGEBOARDS
     // Shogi (Japanese chess)
     // https://en.wikipedia.org/wiki/Shogi
@@ -1898,6 +1946,7 @@ void VariantMap::init() {
     add("flipello", flipello_variant());
     add("minixiangqi", minixiangqi_variant());
     add("raazuvaa", raazuvaa_variant());
+    add("mill", mill_variant());
 #ifdef LARGEBOARDS
     add("shogi", shogi_variant());
     add("shoshogi", shoshogi_variant());

@@ -398,6 +398,7 @@ enum Value : int {
   WazirValueMg             = 400,   WazirValueEg             = 350,
   CommonerValueMg          = 700,   CommonerValueEg          = 900,
   CentaurValueMg           = 1800,  CentaurValueEg           = 1900,
+  MillPieceValueMg   = 100,   MillPieceValueEg   = 100,
 
   MidgameLimit  = 15258, EndgameLimit  = 3915
 };
