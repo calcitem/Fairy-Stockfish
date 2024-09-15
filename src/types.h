@@ -86,7 +86,7 @@
 #    define pext(b, m) _pext_u64(b, m)
 #  endif
 #else
-#  define pext(b, m) 0
+#define pext(b, m) 0
 #endif
 
 namespace Stockfish {
@@ -109,7 +109,12 @@ constexpr bool Is64Bit = true;
 constexpr bool Is64Bit = false;
 #endif
 
+#ifdef TRANSPOSITION_TABLE_64BIT_KEY
 typedef uint64_t Key;
+#else
+using Key = uint32_t;
+#endif /* TRANSPOSITION_TABLE_64BIT_KEY */
+
 #ifdef LARGEBOARDS
 #if defined(__GNUC__) && defined(IS_64BIT)
 typedef unsigned __int128 Bitboard;
@@ -398,7 +403,10 @@ enum Value : int {
   WazirValueMg             = 400,   WazirValueEg             = 350,
   CommonerValueMg          = 700,   CommonerValueEg          = 900,
   CentaurValueMg           = 1800,  CentaurValueEg           = 1900,
-  MillPieceValueMg   = 100,   MillPieceValueEg   = 100,
+
+  // Mill Support: 定义 Mill 的棋子价值
+  MillPieceValueMg          = 100,  // 中局 Mill 棋子价值
+  MillPieceValueEg          = 100,  // 残局 Mill 棋子价值
 
   MidgameLimit  = 15258, EndgameLimit  = 3915
 };
@@ -414,7 +422,9 @@ enum PieceType {
   SOLDIER, HORSE, ELEPHANT, JANGGI_ELEPHANT, BANNER,
   WAZIR, COMMONER, CENTAUR,
 
-  CUSTOM_PIECE_1, CUSTOM_PIECE_2, CUSTOM_PIECE_3, CUSTOM_PIECE_4,
+  CUSTOM_PIECE_1, // Mill White Piece
+  CUSTOM_PIECE_2, // Mill Black Piece
+  CUSTOM_PIECE_3, CUSTOM_PIECE_4,
   CUSTOM_PIECE_5, CUSTOM_PIECE_6, CUSTOM_PIECE_7, CUSTOM_PIECE_8,
 
   PIECE_TYPE_NB = 1 << PIECE_TYPE_BITS,
@@ -449,8 +459,12 @@ enum PieceSet : uint64_t {
   SHOGI_PIECES = (1ULL << SHOGI_PAWN) | (1ULL << GOLD) | (1ULL << SILVER) | (1ULL << SHOGI_KNIGHT) | (1ULL << LANCE)
                 | (1ULL << DRAGON)| (1ULL << DRAGON_HORSE) | (1ULL << KING),
   COMMON_STEP_PIECES = (1ULL << COMMONER) | (1ULL << FERS) | (1ULL << WAZIR) | (1ULL << BREAKTHROUGH_PIECE),
+
+  // Mill Support: 包含 Mill 的棋子类型
+  MILL_PIECES = (1ULL << CUSTOM_PIECE_1) | (1ULL << CUSTOM_PIECE_2),
 };
 
+// Mill Support: 定义 RiderType 枚举以支持 Mill 的棋子移动（如果需要）
 enum RiderType : int {
   NO_RIDER = 0,
   RIDER_BISHOP = 1 << 0,
@@ -504,28 +518,25 @@ enum Square : int {
   SQ_A9, SQ_B9, SQ_C9, SQ_D9, SQ_E9, SQ_F9, SQ_G9, SQ_H9, SQ_I9, SQ_J9, SQ_K9, SQ_L9,
   SQ_A10, SQ_B10, SQ_C10, SQ_D10, SQ_E10, SQ_F10, SQ_G10, SQ_H10, SQ_I10, SQ_J10, SQ_K10, SQ_L10,
 #else
-  SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1,
-  SQ_A2, SQ_B2, SQ_C2, SQ_D2, SQ_E2, SQ_F2, SQ_G2, SQ_H2,
-  SQ_A3, SQ_B3, SQ_C3, SQ_D3, SQ_E3, SQ_F3, SQ_G3, SQ_H3,
-  SQ_A4, SQ_B4, SQ_C4, SQ_D4, SQ_E4, SQ_F4, SQ_G4, SQ_H4,
-  SQ_A5, SQ_B5, SQ_C5, SQ_D5, SQ_E5, SQ_F5, SQ_G5, SQ_H5,
-  SQ_A6, SQ_B6, SQ_C6, SQ_D6, SQ_E6, SQ_F6, SQ_G6, SQ_H6,
-  SQ_A7, SQ_B7, SQ_C7, SQ_D7, SQ_E7, SQ_F7, SQ_G7, SQ_H7,
-  SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8,
-#endif
+  // Mill 使用的 24 个点的棋盘，可以按照特定顺序定义
+  // 示例顺序（根据实际 Mill 棋盘的布局调整）
+  SQ_A1, SQ_A4, SQ_A7,
+  SQ_B2, SQ_B4, SQ_B6,
+  SQ_C3, SQ_C4, SQ_C5,
+  SQ_D1, SQ_D2, SQ_D3, SQ_D5, SQ_D6, SQ_D7,
+  SQ_E3, SQ_E4, SQ_E5,
+  SQ_F2, SQ_F4, SQ_F6,
+  SQ_G1, SQ_G4, SQ_G7,
+
   SQ_NONE,
 
+  SQUARE_NB = 24, // Mill 棋盘上的点数
   SQUARE_ZERO = 0,
-#ifdef LARGEBOARDS
-  SQUARE_NB = 120,
-  SQUARE_BIT_MASK = 127,
-#else
-  SQUARE_NB = 64,
-  SQUARE_BIT_MASK = 63,
-#endif
+
   SQ_MAX = SQUARE_NB - 1,
-  SQUARE_NB_CHESS = 64,
-  SQUARE_NB_SHOGI = 81,
+
+  // 确保 SQ_NONE 不在有效范围内
+#endif
 };
 
 enum Direction : int {
@@ -676,7 +687,11 @@ inline PieceSet& operator^= (PieceSet& ps, PieceType pt) { return ps ^= piece_se
 static_assert(piece_set(PAWN) & PAWN);
 static_assert(piece_set(KING) & KING);
 
-/// Additional operators to add a Direction to a Square
+// Mill Support: 确保 Mill 的棋子类型被包含在相应的 PieceSet 中
+static_assert(MILL_PIECES & (1ULL << CUSTOM_PIECE_1), "Mill White Piece not included in MILL_PIECES.");
+static_assert(MILL_PIECES & (1ULL << CUSTOM_PIECE_2), "Mill Black Piece not included in MILL_PIECES.");
+
+// Additional operators to add a Direction to a Square
 constexpr Square operator+(Square s, Direction d) { return Square(int(s) + int(d)); }
 constexpr Square operator-(Square s, Direction d) { return Square(int(s) - int(d)); }
 inline Square& operator+=(Square& s, Direction d) { return s = s + d; }
